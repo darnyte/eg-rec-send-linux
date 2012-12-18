@@ -125,7 +125,7 @@ $(DEBUG-FILE):
 	@echo
 	@echo "Marking (debug) executable as built."
 	@touch $(DEBUG-FILE)
-	#@rm -f $(RELEASE-FILE)
+#@rm -f $(RELEASE-FILE)
 	@echo "Done."
 	@echo
 
@@ -141,7 +141,7 @@ $(RELEASE-FILE):
 	@echo
 	@echo "Marking executable as built."
 	@touch $(RELEASE-FILE)
-	#@rm -f $(DEBUG-FILE)
+#@rm -f $(DEBUG-FILE)
 	@echo "Done."
 	@echo
 

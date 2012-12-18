@@ -27,9 +27,9 @@
 #endif
 
 
-#define DEFAULT_TIME_OUT					6.5
-#define EXECUTE_READ_WRITE_LINE_TIME_OUT	4.0
-#define EXECUTE_WAIT_TIME_OUT				2
+#define DEFAULT_TIME_OUT					3.5
+#define EXECUTE_READ_WRITE_LINE_TIME_OUT	2.0
+#define EXECUTE_WAIT_TIME_OUT				2.5
 
 
 #define STR_ASTERISKS_PASS					"***********"
@@ -157,7 +157,7 @@ Kernel release:\t\"%s\".\nKernel version:\t\"%s\".\nMachine:\t\"%s\".\nProcessor
 #define LOG_PARAMETERS_PREAMBLE				"%s:\t%s PID [%d] - \
 Parameters:\n\tDaemon:\t\t%s\n\tHost:\t\t\"%s\"\n\tPort:\t\t%d\n\tPass:\t\t\"%s\"\n\
 \tSingle:\t\t%s\n\tUser:\t\t\"%s\" \
-=> (%d:%d)\n\tCommand:\t\"%s\"\n\tConfig:\t\t%s\n\tLog:\t\t%s\n"
+=> (%d:%d)\n\tCommand:\t\"%s\"\n\tConfig:\t\t\"%s\"\n\tLog:\t\t%s\n"
 
 
 #define LOG_PARAMETER_PARSING				"%s:\t%s PID [%d] - Parsing \"%s\" option...\n"
