@@ -8,10 +8,12 @@ function pause(){
 
 echo "HELLO"
 
+payload=""
 
 for (( c=0; c<$6 ; c++ )) ; do
 	echo "PAYLOAD"
 	read line
+	payload="$payload $line"
 	echo $line >> ~/Documents/salida.txt
 done
 
@@ -35,7 +37,7 @@ if [ $4  -eq 3 ] ; then
 	#pkill mariotune.sh
 fi
 
-echo "host = \"$1\", ip = \"$2\", port = \"$3\", event_type = \"$4\", event = \"$5\", payload_lenght = \"$6\""
+echo "host = \"$1\", ip = \"$2\", port = \"$3\", event_type = \"$4\", event = \"$5\", payload_lenght = \"$6\", payload = \"$payload\""
 #echo "Command completed."
 
 #pause
