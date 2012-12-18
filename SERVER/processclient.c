@@ -100,8 +100,8 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 	errno = 0;
 
 	/* Promote socket. */
-	if ( ( (input_lines = fdopen (socket_fd, "r")) == NULL) ||
-			( (output_lines = fdopen (socket_fd, "w")) == NULL))
+	if ( ( (input_lines = fdopen (socket_fd, "r") ) == NULL) ||
+			( (output_lines = fdopen (socket_fd, "w") ) == NULL) )
 		return ERROR_PROMOTING_SOCKET_TO_FILE;
 
 	/* Set the buffering to lines for the output file. */
@@ -117,7 +117,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -132,14 +132,14 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 	errno = 0;
 
 	if (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
-							 &line_len, &eof_found, TRUE, FALSE))
+							 &line_len, &eof_found, TRUE, FALSE) )
 		return ERROR_READING_MAGIC_WORD;
 
 	errno = 0;
 
 	auxres =
-		( (line_len == strlen (MAGIC_WORD)) &&
-		  (strncmp (line_buffer, MAGIC_WORD, line_len) == 0));
+		( (line_len == strlen (MAGIC_WORD) ) &&
+		  (strncmp (line_buffer, MAGIC_WORD, line_len) == 0) );
 
 	Free_string (&line_buffer);
 
@@ -156,7 +156,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -170,10 +170,10 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	errno = 0;
 
-	if (!Generate_cookie (cookie, sizeof (cookie)))
+	if (!Generate_cookie (cookie, sizeof (cookie) ) )
 		return ERROR_GENERATING_PASSWORD_COOKIE;
 
-	if (!Write_line (output_lines,  cookie))
+	if (!Write_line (output_lines,  cookie) )
 		return ERROR_WRITING_COOKIE;
 
 	Vlogit (tll_debug,
@@ -186,7 +186,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -200,12 +200,12 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	errno = 0;
 
-	if (!Convert_between_latin15_and_current_locale (password, &password_latin, FALSE))
+	if (!Convert_between_latin15_and_current_locale (password, &password_latin, FALSE) )
 		return ERROR_CALCULATING_HASH;
 
 	errno = 0;
 
-	auxres = Hash_cookied_password (password_latin, cookie, hash, sizeof (hash));
+	auxres = Hash_cookied_password (password_latin, cookie, hash, sizeof (hash) );
 
 	Free_string (&password_latin);
 
@@ -222,7 +222,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -235,12 +235,12 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			getpid(), "Trying to read and match hash from client...");
 
 	if (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
-							 &line_len, &eof_found, FALSE, FALSE))
+							 &line_len, &eof_found, FALSE, FALSE) )
 		return ERROR_READING_HASH;
 
 	errno = 0;
 
-	auxres = ( (line_len == HASH_LEN) && (strncasecmp (line_buffer, hash, line_len) == 0));
+	auxres = ( (line_len == HASH_LEN) && (strncasecmp (line_buffer, hash, line_len) == 0) );
 
 	Free_string (&line_buffer);
 
@@ -257,7 +257,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -271,7 +271,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	errno = 0;
 
-	if (!Write_line (output_lines, ACCEPT_MSG))
+	if (!Write_line (output_lines, ACCEPT_MSG) )
 		return ERROR_WRITING_ACCEPT_MSG;
 
 	Vlogit (tll_debug,
@@ -284,7 +284,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	/* ************************************************************************************** */
 
@@ -310,7 +310,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 	do
 	{
 		if ( (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
-								   &line_len, &eof_found, FALSE, TRUE)) && (!eof_found))
+								   &line_len, &eof_found, FALSE, TRUE) ) && (!eof_found) )
 		{
 			Free_string_array (&payload, &payload_len, &payload_buffer_len);
 			Free_string (&line_buffer);
@@ -334,11 +334,11 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 		}
 
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate())
+		if (Is_signaled_to_terminate() )
 			break;
 
 		if (strncasecmp (line_buffer, CLOSE_MSG,
-						 MINVAL (line_len, strlen (CLOSE_MSG))) == 0)
+						 MINVAL (line_len, strlen (CLOSE_MSG) ) ) == 0)
 		{
 			Vlogit (tll_debug,
 					LOG_MESSAGE_PREAMBLE,
@@ -354,7 +354,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			close_requested = TRUE;
 		}
 		else if (strncasecmp (line_buffer, PAYLOAD_MSG,
-							  MINVAL (line_len, strlen (PAYLOAD_MSG))) == 0)
+							  MINVAL (line_len, strlen (PAYLOAD_MSG) ) ) == 0)
 		{
 			Vlogit (tll_debug,
 					LOG_MESSAGE_PREAMBLE,
@@ -365,7 +365,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			/* Add to payload. */
 
 			if (!Add_string_to_string_array (&payload, &payload_len, &payload_buffer_len,
-											 line_buffer + strlen (PAYLOAD_MSG) + 1))
+											 line_buffer + strlen (PAYLOAD_MSG) + 1) )
 			{
 				Free_string_array (&payload, &payload_len, &payload_buffer_len);
 				Free_string (&line_buffer);
@@ -374,7 +374,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			}
 		}
 		else if ( (payload_len > 0) && (strncasecmp (payload[payload_len - 1], BUTTON_RELEASED_MSG,
-										MINVAL (strlen (payload[payload_len - 1]), strlen (BUTTON_RELEASED_MSG))) == 0))
+										MINVAL (strlen (payload[payload_len - 1]), strlen (BUTTON_RELEASED_MSG) ) ) == 0) )
 		{
 			Vlogit (tll_debug,
 					LOG_MESSAGE_PREAMBLE,
@@ -388,7 +388,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			event_type = tet_end_event;
 		}
 		else if ( (payload_len > 0) && (strncasecmp (payload[payload_len - 1], WITHOUT_RELEASE_MSG,
-										MINVAL (strlen (payload[payload_len - 1]), strlen (WITHOUT_RELEASE_MSG))) == 0))
+										MINVAL (strlen (payload[payload_len - 1]), strlen (WITHOUT_RELEASE_MSG) ) ) == 0) )
 		{
 			Vlogit (tll_debug,
 					LOG_MESSAGE_PREAMBLE,
@@ -417,8 +417,8 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 		errno = 0;
 
-		if ( (!Is_signaled_to_terminate()) && (!close_requested) && (event_type != tet_unknown) &&
-				(executable != NULL) && (strlen (executable) > 0))
+		if ( (!Is_signaled_to_terminate() ) && (!close_requested) && (event_type != tet_unknown) &&
+				(executable != NULL) && (strlen (executable) > 0) )
 		{
 			Vlogit (tll_info,
 					LOG_MESSAGE_PREAMBLE,
@@ -451,7 +451,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 					PROCESS_P_C (g_daemonized, g_processor),
 					getpid(), "Success executing command.");
 		}
-		else if ( (!close_requested) && (event_type != tet_unknown))
+		else if ( (!close_requested) && (event_type != tet_unknown) )
 		{
 			Vlogit (tll_info,
 					LOG_EVENT_NO_COMMAND,
@@ -480,7 +480,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	/* ************************************************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate())
+	if (Is_signaled_to_terminate() )
 		return ERROR_INTERRUPTED;
 	else if (close_requested)
 	{
@@ -521,58 +521,59 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 	size_t line_len = 0;
 	int linenr;
 	bool eof_found;
-	FILE *pipe_read, *pipe_write;
+	FILE *pipe_read = NULL, *pipe_write = NULL;
 
 	char** argv = NULL;
-	pid_t mypid;
+	pid_t childpid = 0;
 
 	int cmdres;
 	char* typeexec = "p";
 	bool res = FALSE;
 
+	bool close_received = FALSE;
 	bool error_executing = FALSE;
-	bool kill_child = FALSE;
-
+	bool timer_failed = FALSE;
+	bool message_line = FALSE;
 
 	/* command <client host name> <client IP> <client port> <event type> <event> <payload length> <payload 1> ...<payload n> */
 
-	if (!Add_string_to_string_array (&argv, &len, &buffer_len, executable))
+	if (!Add_string_to_string_array (&argv, &len, &buffer_len, executable) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_string_to_string_array (&argv, &len, &buffer_len, client_host_name))
+	if (!Add_string_to_string_array (&argv, &len, &buffer_len, client_host_name) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_string_to_string_array (&argv, &len, &buffer_len, client_IP))
+	if (!Add_string_to_string_array (&argv, &len, &buffer_len, client_IP) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, client_port))
+	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, client_port) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, event_type))
+	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, event_type) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_string_to_string_array (&argv, &len, &buffer_len, event))
+	if (!Add_string_to_string_array (&argv, &len, &buffer_len, event) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
 	}
 
-	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, payload_len))
+	if (!Add_luint_to_string_array (&argv, &len, &buffer_len, payload_len) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		return FALSE;
@@ -580,7 +581,7 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 
 	for (i = 0; i < payload_len; i++)
 	{
-		if (!Add_string_to_string_array (&argv, &len, &buffer_len, payload[i]))
+		if (!Add_string_to_string_array (&argv, &len, &buffer_len, payload[i]) )
 		{
 			Free_string_array (&argv, &len, &buffer_len);
 			return FALSE;
@@ -599,8 +600,8 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 		return FALSE;
 	}
 
-	if (!popen_ext (argv[0], argv, typeexec, &pipe_read, &pipe_write, &mypid,
-					fd_to_close_in_child, fd_to_close_in_child_count))
+	if (!popen_ext (argv[0], argv, typeexec, &pipe_read, &pipe_write, &childpid,
+					fd_to_close_in_child, fd_to_close_in_child_count) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		Free_string (&line_buffer);
@@ -614,35 +615,51 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 	errno = 0;
 	linenr = 1;
 
-	if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT))
+	if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
 	{
 		Free_string_array (&argv, &len, &buffer_len);
 		Free_string (&line_buffer);
-		return FALSE;
+		timer_failed = TRUE;
 	}
 
-	while (Read_stripped_line (pipe_read, &line_buffer, &line_buffer_len, &line_len, &eof_found, FALSE, FALSE))
+	do
 	{
-		if (!Set_alarm_timer (0.0))
+		errno = 0;
+
+		if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
 		{
-			error_executing = TRUE;
+			timer_failed = TRUE;
 			break;
 		}
 
-		if ( ( (line_len == strlen (CLOSE_MY_MSG)) &&
-				(strncmp (line_buffer, CLOSE_MY_MSG, line_len) == 0)))
+		error_executing = ( (!Read_stripped_line (pipe_read,
+							 &line_buffer, &line_buffer_len,
+							 &line_len, &eof_found, FALSE, FALSE) ) &&
+							( (errno != 0) || !eof_found) );
+
+		if (!Set_alarm_timer (0.0) )
+		{
+			timer_failed = TRUE;
+			break;
+		}
+
+		if (error_executing)
+			break;
+
+		if ( ( (line_len == strlen (CLOSE_MY_MSG) ) &&
+				(strncmp (line_buffer, CLOSE_MY_MSG, line_len) == 0) ) )
 		{
 			/* Child indicates termination. */
-			break;
+			close_received = TRUE;
 		}
 
 
-		if (linenr == 1)
+		if ( (!close_received) && (linenr == 1) )
 		{
 			/* HELLO message expected from child. */
 
-			if ( (line_len != strlen (HELLO_MY_MSG)) ||
-					(strncmp (line_buffer, HELLO_MY_MSG, line_len) != 0))
+			if ( (line_len != strlen (HELLO_MY_MSG) ) ||
+					(strncmp (line_buffer, HELLO_MY_MSG, line_len) != 0) )
 			{
 				/* Invalid HELLO message. */
 
@@ -650,31 +667,37 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 				break;
 			}
 		}
-		else
+		else if (!close_received)
 		{
 			/* PAYLOAD message expected from child, requesting a payload line. */
 
-			if ( (line_len == strlen (PAYLOAD_MY_MSG)) &&
+			if ( (line_len == strlen (PAYLOAD_MY_MSG) ) &&
 					(strncmp (line_buffer, PAYLOAD_MY_MSG, line_len) == 0) &&
-					( (size_t) (linenr - 2) < payload_len))
+					( (size_t) (linenr - 2) < payload_len) )
 			{
-				if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT))
+				if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
+				{
+					timer_failed = TRUE;
+					break;
+				}
+
+				if (!Write_line (pipe_write, payload[linenr - 2]) )
 				{
 					error_executing = TRUE;
 					break;
 				}
 
-				if (!Write_line (pipe_write, payload[linenr - 2]))
+				if (!Set_alarm_timer (0.0) )
 				{
-					error_executing = TRUE;
+					timer_failed = TRUE;
 					break;
 				}
+			}
+			else if (!message_line)
+			{
+				/* The process send the extra info line. */
 
-				if (!Set_alarm_timer (0.0))
-				{
-					error_executing = TRUE;
-					break;
-				}
+				message_line = TRUE;
 			}
 			else
 			{
@@ -692,59 +715,50 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 				getpid(), linenr, line_buffer);
 
 		++linenr;
-
-		if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT))
-		{
-			error_executing = TRUE;
-			break;
-		}
-
-		errno = 0;
 	}
+	while ( (!timer_failed) && (!close_received) && (!error_executing) )
 
-	if (!Set_alarm_timer (0.0))
-		error_executing = TRUE;
+	/* error_executing = (error_executing || (errno != 0));  EINTR */
+
+	if (!Set_alarm_timer (0.0) )
+		timer_failed = TRUE;
 
 	Free_string (&line_buffer);
 
-	error_executing = (error_executing || (errno != 0)); /* EINTR */
-
-	if (error_executing)
-		kill_child = TRUE;
-	else
+	if (error_executing || timer_failed)
 	{
-		if (!Set_alarm_timer (EXECUTE_WAIT_TIME_OUT))
-		{
-			error_executing = TRUE;
-			kill_child = TRUE;
-		}
-		else
-		{
-			res = pclose_ext (pipe_read, pipe_write, mypid, &cmdres);
+		/* The child process waas executed but we failed to set a timer or
+		to read from or to write to the process. */
+		error_executing = TRUE;
 
-			kill_child = error_executing = (!res && (errno != ECHILD));
-
-			if (!Set_alarm_timer (0.0))
-				error_executing = TRUE;
-		}
+		/* Ask the child process to terminate. */
+		kill (childpid, SIGTERM);
 	}
 
-	if (error_executing)
-		Set_alarm_timer (0.0);
+	timer_failed = (!Set_alarm_timer (EXECUTE_WAIT_TIME_OUT) );
 
-	if (kill_child)
+	res = ( (!timer_failed) && pclose_ext (&pipe_read, &pipe_write, childpid, &cmdres) );
+
+	Set_alarm_timer (0.0);
+
+	if (!res)
 	{
-		kill (mypid, SIGKILL);
+		kill (childpid, SIGKILL);
 
-		waitpid (mypid, NULL, WNOHANG);
+		usleep (100000);
 
-		fclose (pipe_read);
-		fclose (pipe_write);
+		waitpid (childpid, NULL, WNOHANG);
+
+		if (pipe_read != NULL)
+			fclose (pipe_read);
+
+		if (pipe_write != NULL)
+			fclose (pipe_write);
 	}
 
 	Free_string_array (&argv, &len, &buffer_len);
 
-	return (!error_executing && res && (cmdres == 0));
+	return (!error_executing && res && (cmdres == 0) );
 }
 
 
@@ -775,7 +789,7 @@ static bool Set_alarm_timer (double time_to_wait)
 	assert (time_to_wait >= 0.0);
 	/* ------------------------ */
 
-	memset (&time, 0x00, sizeof (time));
+	memset (&time, 0x00, sizeof (time) );
 
 	if (time_to_wait > 0.0)
 	{
@@ -797,7 +811,7 @@ static void Ignore_or_restore_SIGPIPE_signal (bool ignore)
 {
 	struct sigaction hand;
 
-	memset (&hand, 0x00, sizeof (hand));
+	memset (&hand, 0x00, sizeof (hand) );
 
 	sigemptyset (&hand.sa_mask);
 	hand.sa_flags = 0;
