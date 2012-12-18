@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="EGReceiver" />
+		<Option makefile="./SERVER/makefile" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="./" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/EGReceiver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters='-f &quot;/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/server.conf&quot;' />
+				<Compiler>
+					<Add option="-pedantic-errors" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DUNAME_PLATFORM=1" />
+					<Add option='-DKERNEL_UNAME=&quot;\&quot;$$(uname -s)\&quot;&quot;' />
+					<Add option='-DNODE_UNAME=&quot;\&quot;$$(uname -n)\&quot;&quot;' />
+					<Add option='-DKERNEL_RELEASE_UNAME=&quot;\&quot;$$(uname -r)\&quot;&quot;' />
+					<Add option='-DKERNEL_VERSION_UNAME=&quot;\&quot;$$(uname -v)\&quot;&quot;' />
+					<Add option='-DMACHINE_UNAME=&quot;\&quot;$$(uname -m)\&quot;&quot;' />
+					<Add option='-DPROCESSOR_UNAME=&quot;\&quot;$$(uname -p)\&quot;&quot;' />
+					<Add option='-DHARDWARE_UNAME=&quot;\&quot;$$(uname -i)\&quot;&quot; -' />
+					<Add option="-DDEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/EGReceiver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-pedantic-errors" />
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-DUNAME_PLATFORM=1" />
+					<Add option='-DKERNEL_UNAME=&quot;\&quot;$$(uname -s)\&quot;&quot;' />
+					<Add option='-DNODE_UNAME=&quot;\&quot;$$(uname -n)\&quot;&quot;' />
+					<Add option='-DKERNEL_RELEASE_UNAME=&quot;\&quot;$$(uname -r)\&quot;&quot;' />
+					<Add option='-DKERNEL_VERSION_UNAME=&quot;\&quot;$$(uname -v)\&quot;&quot;' />
+					<Add option='-DMACHINE_UNAME=&quot;\&quot;$$(uname -m)\&quot;&quot;' />
+					<Add option='-DPROCESSOR_UNAME=&quot;\&quot;$$(uname -p)\&quot;&quot;' />
+					<Add option='-DHARDWARE_UNAME=&quot;\&quot;$$(uname -i)\&quot;&quot; -' />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="SERVER/makefile" />
+		<Unit filename="../Common/getopt_ext/getoptext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../Common/getopt_ext/getoptext.h" />
+		<Unit filename="../Common/globals.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../Common/globals.h" />
+		<Unit filename="../Common/md5/md5.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../Common/md5/md5.h" />
+		<Unit filename="../Common/network/network.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../Common/network/network.h" />
+		<Unit filename="../Common/popen_ext/popenext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../Common/popen_ext/popenext.h" />
+		<Unit filename="../SERVER/Server.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../SERVER/Server.h" />
+		<Unit filename="../SERVER/dropprivileges.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../SERVER/dropprivileges.h" />
+		<Unit filename="../SERVER/exiterror.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../SERVER/exiterror.h" />
+		<Unit filename="../SERVER/proc.sh" />
+		<Unit filename="../SERVER/processclient.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../SERVER/processclient.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

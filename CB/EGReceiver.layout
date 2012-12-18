@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="SERVER/makefile" open="1" top="0" tabpos="10">
+		<Cursor position="10112" topLine="377" />
+	</File>
+	<File name="../Common/getopt_ext/getoptext.c" open="0" top="0" tabpos="4">
+		<Cursor position="117" topLine="0" />
+	</File>
+	<File name="../Common/getopt_ext/getoptext.h" open="0" top="0" tabpos="6">
+		<Cursor position="558" topLine="23" />
+	</File>
+	<File name="../Common/globals.c" open="1" top="0" tabpos="4">
+		<Cursor position="167" topLine="27" />
+	</File>
+	<File name="../Common/globals.h" open="1" top="0" tabpos="7">
+		<Cursor position="2131" topLine="44" />
+	</File>
+	<File name="../Common/md5/md5.c" open="0" top="0" tabpos="7">
+		<Cursor position="2291" topLine="105" />
+	</File>
+	<File name="../Common/md5/md5.h" open="0" top="0" tabpos="4">
+		<Cursor position="2980" topLine="50" />
+	</File>
+	<File name="../Common/network/network.c" open="1" top="0" tabpos="5">
+		<Cursor position="4587" topLine="179" />
+	</File>
+	<File name="../Common/network/network.h" open="0" top="0" tabpos="6">
+		<Cursor position="226" topLine="0" />
+	</File>
+	<File name="../Common/popen_ext/popenext.c" open="1" top="0" tabpos="8">
+		<Cursor position="101" topLine="29" />
+	</File>
+	<File name="../Common/popen_ext/popenext.h" open="1" top="0" tabpos="9">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="../SERVER/Server.c" open="1" top="0" tabpos="1">
+		<Cursor position="20988" topLine="821" />
+	</File>
+	<File name="../SERVER/Server.h" open="1" top="0" tabpos="2">
+		<Cursor position="3103" topLine="21" />
+	</File>
+	<File name="../SERVER/dropprivileges.c" open="0" top="0" tabpos="10">
+		<Cursor position="6440" topLine="380" />
+	</File>
+	<File name="../SERVER/dropprivileges.h" open="0" top="0" tabpos="8">
+		<Cursor position="132" topLine="0" />
+	</File>
+	<File name="../SERVER/exiterror.c" open="0" top="0" tabpos="3">
+		<Cursor position="15418" topLine="474" />
+	</File>
+	<File name="../SERVER/exiterror.h" open="0" top="0" tabpos="4">
+		<Cursor position="2710" topLine="75" />
+	</File>
+	<File name="../SERVER/proc.sh" open="0" top="0" tabpos="3">
+		<Cursor position="140" topLine="0" />
+	</File>
+	<File name="../SERVER/processclient.c" open="1" top="1" tabpos="3">
+		<Cursor position="17222" topLine="626" />
+	</File>
+	<File name="../SERVER/processclient.h" open="1" top="0" tabpos="6">
+		<Cursor position="140" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

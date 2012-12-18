@@ -1,0 +1,118 @@
+# depslib dependency file v1.0
+1354999403 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/globals.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	<iconv.h>
+	<assert.h>
+	"globals.h"
+	"./md5/md5.h"
+
+1355118991 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/globals.h
+	"myplatform.h"
+
+1354557200 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/md5/md5.h
+
+1354557136 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/md5/md5.c
+	"md5.h"
+	<string.h>
+
+1355002050 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/network/network.c
+	<stdlib.h>
+	<stdio.h>
+	<unistd.h>
+	<limits.h>
+	<errno.h>
+	<string.h>
+	<sys/socket.h>
+	<netdb.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<assert.h>
+	"./../globals.h"
+	"network.h"
+
+1354928486 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/network/network.h
+
+1355110976 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/Server.c
+	<stdlib.h>
+	<stdio.h>
+	<unistd.h>
+	<sys/stat.h>
+	<strings.h>
+	<string.h>
+	<locale.h>
+	<errno.h>
+	<stdint.h>
+	<signal.h>
+	<sys/wait.h>
+	"./../Common/globals.h"
+	"./../Common/getopt_ext/getoptext.h"
+	"Server.h"
+	"exiterror.h"
+	"dropprivileges.h"
+	"./../Common/network/network.h"
+	"processclient.h"
+
+1355119689 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/Server.h
+
+1355110430 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/exiterror.h
+
+1354557176 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/dropprivileges.h
+
+1354925056 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/processclient.h
+
+1354999494 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/dropprivileges.c
+	<stdlib.h>
+	<unistd.h>
+	<errno.h>
+	<string.h>
+	<strings.h>
+	<pwd.h>
+	<grp.h>
+	<assert.h>
+	"./../Common/globals.h"
+	"exiterror.h"
+	"dropprivileges.h"
+
+1355110853 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/exiterror.c
+	<stdlib.h>
+	<stdio.h>
+	<sys/types.h>
+	<unistd.h>
+	<string.h>
+	<limits.h>
+	<stdint.h>
+	<math.h>
+	<stdarg.h>
+	<syslog.h>
+	"./../Common/globals.h"
+	"Server.h"
+	"exiterror.h"
+	"./../Common/network/network.h"
+
+1354999192 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/processclient.c
+	<stdlib.h>
+	<stdio.h>
+	<unistd.h>
+	<strings.h>
+	<string.h>
+	<errno.h>
+	<stdint.h>
+	"./../Common/globals.h"
+	"processclient.h"
+	"Server.h"
+	"exiterror.h"
+
+1355006022 source:/home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/getopt_ext/getoptext.c
+	<stdlib.h>
+	<stdio.h>
+	"../globals.h"
+	"getoptext.h"
+
+1354994542 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/getopt_ext/getoptext.h
+	<getopt.h>
+
+1355119235 /home/bakaneko/Documents/EGResponder/EG_RESPONDER/Common/myplatform.h
+
