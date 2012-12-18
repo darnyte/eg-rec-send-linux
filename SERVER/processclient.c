@@ -512,16 +512,15 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 
 	/* command <client IP> <client port> <event type> <event> <payload length> <payload 1> ...<payload n> */
 
-	size_t i;
 	size_t len = 0;
-	size_t buffer_len = 8 + payload_len;
+	size_t buffer_len = 8 /*+ payload_len*/;
 
 	size_t line_buffer_len = 0;
 	char* line_buffer = NULL;
 	size_t line_len = 0;
 	int linenr;
 	bool eof_found;
-	FILE *pipe_read = NULL, *pipe_write = NULL;
+	FILE *pipe_read, *pipe_write;
 
 	char** argv = NULL;
 	pid_t childpid = 0;
@@ -579,14 +578,14 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 		return FALSE;
 	}
 
-	for (i = 0; i < payload_len; i++)
+	/*for (i = 0; i < payload_len; i++)
 	{
 		if (!Add_string_to_string_array (&argv, &len, &buffer_len, payload[i]) )
 		{
 			Free_string_array (&argv, &len, &buffer_len);
 			return FALSE;
 		}
-	}
+	}*/
 
 	errno = 0;
 
@@ -611,18 +610,9 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 	/* Set the buffering to lines for the write pipe end. */
 	setlinebuf (pipe_write);
 
-
-	errno = 0;
 	linenr = 1;
 
-	if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
-	{
-		Free_string_array (&argv, &len, &buffer_len);
-		Free_string (&line_buffer);
-		timer_failed = TRUE;
-	}
-
-	do
+	while (!close_received)
 	{
 		errno = 0;
 
@@ -632,10 +622,9 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 			break;
 		}
 
-		error_executing = ( (!Read_stripped_line (pipe_read,
-							 &line_buffer, &line_buffer_len,
-							 &line_len, &eof_found, FALSE, FALSE) ) &&
-							( (errno != 0) || !eof_found) );
+		error_executing = (!Read_stripped_line (
+							   pipe_read, &line_buffer, &line_buffer_len,
+							   &line_len, &eof_found, FALSE, FALSE) );
 
 		if (!Set_alarm_timer (0.0) )
 		{
@@ -654,57 +643,60 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 		}
 
 
-		if ( (!close_received) && (linenr == 1) )
+		if (!close_received)
 		{
-			/* HELLO message expected from child. */
-
-			if ( (line_len != strlen (HELLO_MY_MSG) ) ||
-					(strncmp (line_buffer, HELLO_MY_MSG, line_len) != 0) )
+			if (linenr == 1)
 			{
-				/* Invalid HELLO message. */
+				/* HELLO message expected from child. */
 
-				error_executing = TRUE;
-				break;
-			}
-		}
-		else if (!close_received)
-		{
-			/* PAYLOAD message expected from child, requesting a payload line. */
-
-			if ( (line_len == strlen (PAYLOAD_MY_MSG) ) &&
-					(strncmp (line_buffer, PAYLOAD_MY_MSG, line_len) == 0) &&
-					( (size_t) (linenr - 2) < payload_len) )
-			{
-				if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
+				if ( (line_len != strlen (HELLO_MY_MSG) ) ||
+						(strncmp (line_buffer, HELLO_MY_MSG, line_len) != 0) )
 				{
-					timer_failed = TRUE;
-					break;
-				}
+					/* Invalid HELLO message. */
 
-				if (!Write_line (pipe_write, payload[linenr - 2]) )
-				{
 					error_executing = TRUE;
 					break;
 				}
-
-				if (!Set_alarm_timer (0.0) )
-				{
-					timer_failed = TRUE;
-					break;
-				}
-			}
-			else if (!message_line)
-			{
-				/* The process send the extra info line. */
-
-				message_line = TRUE;
 			}
 			else
 			{
-				/* Invalid message or no more payload lines. */
+				/* PAYLOAD message expected from child, requesting a payload line. */
 
-				error_executing = TRUE;
-				break;
+				if ( (line_len == strlen (PAYLOAD_MY_MSG) ) &&
+						(strncmp (line_buffer, PAYLOAD_MY_MSG, line_len) == 0) &&
+						( (size_t) (linenr - 2) < payload_len) )
+				{
+					if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
+					{
+						timer_failed = TRUE;
+						break;
+					}
+
+					if (!Write_line (pipe_write, payload[linenr - 2]) )
+					{
+						error_executing = TRUE;
+						break;
+					}
+
+					if (!Set_alarm_timer (0.0) )
+					{
+						timer_failed = TRUE;
+						break;
+					}
+				}
+				else if (!message_line)
+				{
+					/* Child process sended an extra info line. */
+
+					message_line = TRUE;
+				}
+				else
+				{
+					/* Invalid message or no more payload lines. */
+
+					error_executing = TRUE;
+					break;
+				}
 			}
 		}
 
@@ -715,10 +707,13 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 				getpid(), linenr, line_buffer);
 
 		++linenr;
-	}
-	while ( (!timer_failed) && (!close_received) && (!error_executing) )
 
-	/* error_executing = (error_executing || (errno != 0));  EINTR */
+		if (!Set_alarm_timer (EXECUTE_READ_WRITE_LINE_TIME_OUT) )
+		{
+			timer_failed = TRUE;
+			break;
+		}
+	}
 
 	if (!Set_alarm_timer (0.0) )
 		timer_failed = TRUE;
