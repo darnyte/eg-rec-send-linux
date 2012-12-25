@@ -138,14 +138,14 @@ bool Start_log()
 {
 	openlog (STR_PROGRAM_NAME, LOG_PID, LOG_DAEMON);
 
-	return TRUE;
+	return true;
 }
 
 bool End_log()
 {
 	closelog();
 
-	return TRUE;
+	return true;
 }
 
 void Logit (TLogLevel level, const char* fmt_str, const int status, const char* pcmessage, const char* str_syserror)
@@ -539,7 +539,7 @@ static int Set_log_level_mask (int levelmask, bool setsyslog)
 	if (setsyslog)
 		return setlogmask (levelmask);
 	else
-		return TRUE;
+		return true;
 }
 
 

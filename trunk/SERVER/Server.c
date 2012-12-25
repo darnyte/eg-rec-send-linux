@@ -12,6 +12,8 @@
 
 #include <locale.h>
 
+#include <assert.h>
+
 #include <errno.h>
 
 #include <stdint.h>
@@ -34,114 +36,6 @@
 /* GDB command for fork debuggung: set follow-fork-mode child */
 
 
-/*/////////////////////// Constants - main - BEGIN - ////////////////////////////////////*/
-/*///////////////////////////////////////////////////////////////////////////////////////*/
-
-
-/* ******************************************************** */
-/* NON LOCALIZABLE!!!!!!!!! */
-
-#define WORKING_DIR							"/"
-#define FILE_MASK							0
-
-#define DEFAULT_DAEMON						FALSE
-#define DEFAULT_PORT						1024
-#define DEFAULT_IP							"0.0.0.0"
-#define DEFAULT_PASSWORD					""
-#define DEFAULT_COMMAND						NULL
-#define DEFAULT_CONFIG_FILE_NAME			NULL
-#define DEFAULT_SINGLE						FALSE
-#define DEFAULT_USER						NULL
-#ifdef NDEBUG
-#define DEFAULT_LOG_LEVEL					tll_error
-#else
-#define DEFAULT_LOG_LEVEL					tll_debug
-#endif
-
-
-
-#define STR_ASTERISKS_PASS					"***********"
-#define WILDCARD_STRING						"*"
-
-#define MAX_CLIENT_CONNECTIONS				25
-
-
-#ifndef STR_PROGRAM_NAME
-#define STR_PROGRAM_NAME					"EGReceiver"
-#endif
-
-#define STR_PROGRAM_INTERNAL_NAME			"Eventghost Receiver"
-
-#ifndef VERSION_MAJOR
-#define VERSION_MAJOR						0
-#endif
-#ifndef VERSION_MINOR
-#define VERSION_MINOR						1
-#endif
-
-#if VERSION_MAJOR < 1
-#if VERSION_MINOR <= 8
-#define VERSION_TYPE						" (Alpha)"
-#else
-#define VERSION_TYPE						" (Bchar** incompatible with const char **eta)"
-#endif
-#else
-#define VERSION_TYPE						""
-#endif
-
-
-#define OPTIONS_COUNT						11
-
-
-#define STR_HELP							"help"
-#define STR_VERSION							"version"
-#define STR_DAEMON							"daemon"
-#define STR_IP								"host"
-#define STR_PORT							"port"
-#define STR_PASSWORD						"password"
-#define STR_SINGLE							"single"
-#define STR_USER							"user"
-#define STR_COMMAND							"command"
-
-#define STR_CONFIG_FILE						"config-file"
-
-#define STR_LOG_LEVEL						"log-level"
-
-
-
-
-#define STR_CONFIG_DAEMON					"DAEMON"
-#define STR_CONFIG_IP						"HOST"
-#define STR_CONFIG_PORT						"PORT"
-#define STR_CONFIG_PASSWORD					"PASSWORD"
-#define STR_CONFIG_SINGLE					"SINGLE"
-#define STR_CONFIG_USER						"USER"
-#define STR_CONFIG_COMMAND					"COMMAND"
-#define STR_CONFIG_LOG_LEVEL				"LOGLEVEL"
-
-
-
-
-#define STR_HELP_SHORT						'h'
-#define STR_VERSION_SHORT					'V'
-#define STR_DAEMON_SHORT					'd'
-#define STR_IP_SHORT						'i'
-#define STR_PORT_SHORT						'r'
-#define STR_PASSWORD_SHORT					'p'
-#define STR_SINGLE_SHORT					's'
-#define STR_USER_SHORT						'u'
-#define STR_COMMAND_SHORT					'c'
-#define STR_CONFIG_FILE_SHORT				'f'
-#define STR_LOG_LEVEL_SHORT					'l'
-
-
-/* ******************************************************** */
-
-
-/*///////////////////////////////////////////////////////////////////////////////////////*/
-/*///////////////////////// Constants - main - END - ////////////////////////////////////*/
-
-
 /*/////////////////////// Global types - main - BEGIN - /////////////////////////////////*/
 /*///////////////////////////////////////////////////////////////////////////////////////*/
 
@@ -154,9 +48,9 @@ typedef void (*t_signal_handler) (int);
 /*/////////////////// Global external variables - BEGIN - ///////////////////////////////*/
 /*///////////////////////////////////////////////////////////////////////////////////////*/
 
-bool 						g_daemonized =			FALSE;
+bool 						g_daemonized =			false;
 
-bool 						g_processor =			FALSE;
+bool 						g_processor =			false;
 
 /*/////////////////// Global external variables - END - /////////////////////////////////*/
 /*///////////////////////////////////////////////////////////////////////////////////////*/
@@ -180,25 +74,25 @@ static struct option_ext optsextarr[OPTIONS_COUNT] =
 	{STR_LOG_LEVEL, required_argument, NULL, STR_LOG_LEVEL_SHORT, STR_LOG_LEVEL_DESC},		/* Log level. */
 };
 
-static bool 				opt_daemon =			FALSE;
+static bool 				opt_daemon =			false;
 static const char*			opt_IP =				NULL;
 static uint16_t 			opt_port =				0;
 static const char*			opt_password =			NULL;
-static bool 				opt_single =			FALSE;
+static bool 				opt_single =			false;
 static const char*			opt_user =				NULL;
 static const char*			opt_command =			NULL;
 static const char*			opt_cfg_file_name =		NULL;
 static TLogLevel			opt_log_level =			LL_DEBUG;
 
-static bool					b_opt_daemon =			FALSE;
-static bool					b_opt_IP =				FALSE;
-static bool					b_opt_port =			FALSE;
-static bool					b_opt_password =		FALSE;
-static bool					b_opt_single =			FALSE;
-static bool					b_opt_user =			FALSE;
-static bool					b_opt_command =			FALSE;
-static bool					b_opt_cfg_file_name =	FALSE;
-static bool					b_opt_log_level =		FALSE;
+static bool					b_opt_daemon =			false;
+static bool					b_opt_IP =				false;
+static bool					b_opt_port =			false;
+static bool					b_opt_password =		false;
+static bool					b_opt_single =			false;
+static bool					b_opt_user =			false;
+static bool					b_opt_command =			false;
+static bool					b_opt_cfg_file_name =	false;
+static bool					b_opt_log_level =		false;
 
 
 static pid_t				parent_pid = 			0;
@@ -208,12 +102,12 @@ static pid_t				processor_pid = 		0;
 
 static gid_t				user_gid =				0;
 static uid_t				user_uid =				0;
-static bool 				user_is_primary_group =	FALSE;
+static bool 				user_is_primary_group =	false;
 
 static const char*			actual_listen_IP =		NULL;
 
 static struct t_IP_addresses_info
-		IP_addresses =								{FALSE, NULL};
+		IP_addresses =								{false, NULL};
 
 static int 					listening_socket_fd =	-1;
 static int 					new_client_socket_fd =	-1;
@@ -221,7 +115,7 @@ static int 					new_client_socket_fd =	-1;
 static char*				client_host_name =		NULL;
 
 static struct config_t		cfg_file_info;
-static bool					config_info_loaded = 	FALSE;
+static bool					config_info_loaded = 	false;
 
 static char*				host_from_cfg =			NULL;
 static char*				password_from_cfg =		NULL;
@@ -278,8 +172,8 @@ static void Signal_handler (int sig);
 */
 int main (int argc, char *argv[])
 {
-	bool root_privileges_needed = TRUE;
-	bool root_privileges_droped = FALSE;
+	bool root_privileges_needed = true;
+	bool root_privileges_droped = false;
 	int null_file_des;
 	char str_IP[INET4_OR_6_ADDRSTRLEN + 1] = "";
 	u_int16_t port = 0;
@@ -289,11 +183,11 @@ int main (int argc, char *argv[])
 
 	errno = 0;
 
-	/* Termination flag to FALSE. */
-	Signal_to_terminate (FALSE);
+	/* Termination flag to false. */
+	Signal_to_terminate (false);
 
 	/* Set signal handlers. */
-	Catch_signals (&Signal_handler, TRUE);
+	Catch_signals (&Signal_handler, true);
 
 	/* Store the parent PID. */
 	parent_pid = getpid();
@@ -302,7 +196,7 @@ int main (int argc, char *argv[])
 	locale = setlocale (LC_ALL, "");
 
 	/* Set initial log level (can be changed from command line). */
-	Set_actual_log_level (DEFAULT_LOG_LEVEL, FALSE);
+	Set_actual_log_level (DEFAULT_LOG_LEVEL, false);
 
 #ifdef NDEBUG
 	/* Not visible if initial log level is less than tll_debug. */
@@ -323,7 +217,7 @@ int main (int argc, char *argv[])
 
 	/* ************************************************************************************** */
 	if (locale == NULL)
-		Messagewarning (ERROR_SETTING_LOCALE, 0, FALSE);
+		Messagewarning (ERROR_SETTING_LOCALE, 0, false);
 	else
 	{
 		locale = setlocale (LC_ALL, NULL);
@@ -352,8 +246,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	Vlogit (tll_debug,
@@ -367,16 +261,16 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	Load_default_config();
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	Vlogit (tll_debug,
@@ -392,21 +286,21 @@ int main (int argc, char *argv[])
 			(opt_user != NULL) ? (int) user_gid : -1,
 			(opt_command != NULL) ? opt_command : EMPTY_STRING,
 			(opt_cfg_file_name != NULL) ? opt_cfg_file_name : EMPTY_STRING,
-			LOGLEVELNAME (opt_log_level) );
+			LOGLEVELNAME (opt_log_level));
 
 	Vlogit (tll_debug,
 			LOG_PROCESS_IDS,
 			LOGLEVELNAME (tll_debug),
 			PROCESS_P_C (g_daemonized, g_processor),
 			getpid(),
-			getuid(), geteuid(), getgid(), getegid() );
+			getuid(), geteuid(), getgid(), getegid());
 	/* ************************************************************************************** */
 
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -419,7 +313,7 @@ int main (int argc, char *argv[])
 			getpid(), "Setting up signal handlers...");
 
 	/* Set signal handlers. */
-	Catch_signals (&Signal_handler, (opt_daemon || !opt_single) );
+	Catch_signals (&Signal_handler, (opt_daemon || !opt_single));
 
 	Vlogit (tll_debug,
 			LOG_MESSAGE_PREAMBLE,
@@ -431,8 +325,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -440,17 +334,17 @@ int main (int argc, char *argv[])
 	root_privileges_droped =
 		try_to_drop_root_privileges (root_privileges_droped, root_privileges_needed);
 
-	if (!root_privileges_droped && Do_i_have_root_privileges() )
+	if (!root_privileges_droped && Do_i_have_root_privileges())
 	{
-		Messagewarning (ERROR_DROPPING_ROOT_PRIVILEGES, 0, FALSE);
+		Messagewarning (ERROR_DROPPING_ROOT_PRIVILEGES, 0, false);
 	}
 	/* ************************************************************************************** */
 
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -474,8 +368,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -489,9 +383,9 @@ int main (int argc, char *argv[])
 
 	errno = 0;
 
-	if ( (chdir (WORKING_DIR) ) < 0)
+	if ( (chdir (WORKING_DIR)) < 0)
 	{
-		Clean_exit (ERROR_SETTING_WORKING_DIRECTORY, errno, FALSE, TRUE);
+		Clean_exit (ERROR_SETTING_WORKING_DIRECTORY, errno, false, true);
 	}
 
 	Vlogit (tll_debug,
@@ -504,8 +398,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -529,7 +423,7 @@ int main (int argc, char *argv[])
 
 		if (daemon_pid < 0)
 		{
-			Clean_exit (ERROR_FORKING, errno, FALSE, TRUE);
+			Clean_exit (ERROR_FORKING, errno, false, true);
 		}
 		/* If we got a good PID, then
 		   we can exit the parent process. */
@@ -541,11 +435,11 @@ int main (int argc, char *argv[])
 					PROCESS_P_C (g_daemonized, g_processor),
 					getpid(), "Success forking, nothing more to do...");
 
-			Clean_exit (ERROR_SUCESS, 0, FALSE, FALSE);
+			Clean_exit (ERROR_SUCESS, 0, false, false);
 		}
 
 		/* Child running daemonized */
-		g_daemonized = TRUE;
+		g_daemonized = true;
 
 		/* ************************************************************************************** */
 		/* Set signal handlers. */
@@ -567,8 +461,8 @@ int main (int argc, char *argv[])
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 
@@ -581,7 +475,7 @@ int main (int argc, char *argv[])
 				getpid(), "Connecting to syslog...");
 
 		Start_log();
-		Set_actual_log_level (opt_log_level, TRUE);
+		Set_actual_log_level (opt_log_level, true);
 
 		Vlogit (tll_debug,
 				LOG_MESSAGE_PREAMBLE,
@@ -614,7 +508,7 @@ int main (int argc, char *argv[])
 		if (sid < 0)
 		{
 			/* Log the failure */
-			Clean_exit (ERROR_CREATING_NEW_SID, errno, FALSE, TRUE);
+			Clean_exit (ERROR_CREATING_NEW_SID, errno, false, true);
 		}
 
 		Vlogit (tll_debug,
@@ -626,8 +520,8 @@ int main (int argc, char *argv[])
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 		/* ************************************************************************************** */
@@ -638,53 +532,50 @@ int main (int argc, char *argv[])
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "Closing standard file descriptors...");
 
-		/*
 		errno = 0;
 
-		if ( (null_file_des = open ("/dev/null", O_RDONLY, 0) ) == -1)
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+		if ( (null_file_des = open (NULL_FILE_DEVICE, O_RDONLY, 0)) == -1)
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 
 		if (dup2 (null_file_des, STDIN_FILENO) == -1)
 		{
 			close (null_file_des);
 
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 		}
 
 		errno = 0;
 
-		if ( (null_file_des = open ("/dev/null", O_WRONLY, 0) ) == -1)
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+		if ( (null_file_des = open (NULL_FILE_DEVICE, O_WRONLY, 0)) == -1)
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 
 		if (dup2 (null_file_des, STDOUT_FILENO) == -1)
 		{
 			close (null_file_des);
 
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 		}
 
 		errno = 0;
 
-		if ( (null_file_des = open ("/dev/null", O_WRONLY, 0) ) == -1)
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+		if ( (null_file_des = open (NULL_FILE_DEVICE, O_WRONLY, 0)) == -1)
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 
 		if (dup2 (null_file_des, STDERR_FILENO) == -1)
 		{
 			close (null_file_des);
 
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 		}
 
-		*/
-
-
+		/*
 		if ( (close (STDIN_FILENO) != 0) ||
 				(close (STDOUT_FILENO) != 0) ||
 				(close (STDERR_FILENO) != 0))
 		{
-			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+			Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 		}
-
+		*/
 
 		Vlogit (tll_debug,
 				LOG_MESSAGE_PREAMBLE,
@@ -697,8 +588,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -712,12 +603,12 @@ int main (int argc, char *argv[])
 
 	errno = 0;
 
-	if (!Init_Socket_And_Bind (&IP_addresses, &listening_socket_fd, &is_IPV6, str_IP, INET4_OR_6_ADDRSTRLEN, &port) )
-		Clean_exit (ERROR_BINDING_TO_IP_ADDRESS, errno, FALSE, TRUE);
+	if (!Init_Socket_And_Bind (&IP_addresses, &listening_socket_fd, &is_IPV6, str_IP, INET4_OR_6_ADDRSTRLEN, &port))
+		Clean_exit (ERROR_BINDING_TO_IP_ADDRESS, errno, false, true);
 
 	Free_IP_addresses_info (&IP_addresses);
 
-	root_privileges_needed = FALSE;
+	root_privileges_needed = false;
 
 	if (strlen (str_IP) > 0)
 	{
@@ -746,10 +637,10 @@ int main (int argc, char *argv[])
 			PROCESS_P_C (g_daemonized, g_processor),
 			getpid(), "Setting socket options...");
 
-	if (!Set_socket_options (listening_socket_fd) )
+	if (!Set_socket_options (listening_socket_fd))
 	{
 		/* failed to set socket timeouts. */
-		Clean_exit (ERROR_SETTING_SOCKET_OPTIONS, errno, FALSE, TRUE);
+		Clean_exit (ERROR_SETTING_SOCKET_OPTIONS, errno, false, true);
 	}
 
 	Vlogit (tll_debug,
@@ -762,8 +653,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	/* ************************************************************************************** */
@@ -774,8 +665,8 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
@@ -787,8 +678,8 @@ int main (int argc, char *argv[])
 			PROCESS_P_C (g_daemonized, g_processor),
 			getpid(), "Starting to listen for connections...");
 
-	if (!Start_listenning (listening_socket_fd, opt_single ? 1 : MAX_CLIENT_CONNECTIONS) )
-		Clean_exit (ERROR_LISTENING, errno, FALSE, TRUE);
+	if (!Start_listenning (listening_socket_fd, opt_single ? 1 : MAX_CLIENT_CONNECTIONS))
+		Clean_exit (ERROR_LISTENING, errno, false, true);
 
 	Vlogit (tll_debug,
 			LOG_MESSAGE_PREAMBLE,
@@ -801,13 +692,13 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 
 	/* While the program is not signaled to terminate. */
-	while (!Is_signaled_to_terminate() )
+	while (!Is_signaled_to_terminate())
 	{
 		int res;
 		bool success_accept, retry_accept;
@@ -833,12 +724,12 @@ int main (int argc, char *argv[])
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 		if (!success_accept)
-			Clean_exit (ERROR_ACCEPTING_NEW_CONNECTION, errno, FALSE, TRUE);
+			Clean_exit (ERROR_ACCEPTING_NEW_CONNECTION, errno, false, true);
 
 		if (strlen (str_IP) > 0)
 		{
@@ -883,13 +774,13 @@ int main (int argc, char *argv[])
 				if (close (new_client_socket_fd) != 0)
 				{
 					/* Failed to close the socket. */
-					Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, FALSE);
+					Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, false);
 				}
 				else
 					new_client_socket_fd = -1;
 
 				/* Fail to fork for a new client. */
-				Clean_exit (ERROR_FORKING_FOR_NEW_CLIENT, errno, FALSE, TRUE);
+				Clean_exit (ERROR_FORKING_FOR_NEW_CLIENT, errno, false, true);
 			}
 
 			if (processor_pid > 0)
@@ -907,7 +798,7 @@ int main (int argc, char *argv[])
 				if (close (new_client_socket_fd) != 0)
 				{
 					/* Fail to close the socket does not terminate the program. */
-					Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, FALSE);
+					Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, false);
 				}
 				else
 					new_client_socket_fd = -1;
@@ -916,7 +807,7 @@ int main (int argc, char *argv[])
 			}
 
 			/* We got a new process for the new connection. */
-			g_processor = TRUE;
+			g_processor = true;
 
 			/* ************************************************************************************** */
 			/* Set signal handlers. */
@@ -927,7 +818,7 @@ int main (int argc, char *argv[])
 					getpid(), "Setting up signal handlers...");
 
 			/* Set signal handlers. */
-			Catch_signals (&Signal_handler, FALSE);
+			Catch_signals (&Signal_handler, false);
 
 			Vlogit (tll_debug,
 					LOG_MESSAGE_PREAMBLE,
@@ -938,8 +829,8 @@ int main (int argc, char *argv[])
 
 			/* ************************************************** */
 			/* If the program is signaled to terminate. */
-			if (Is_signaled_to_terminate() )
-				Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+			if (Is_signaled_to_terminate())
+				Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 			/* ************************************************** */
 
 			Vlogit (tll_debug,
@@ -964,7 +855,7 @@ int main (int argc, char *argv[])
 			if (proc_sid < 0)
 			{
 				/* Log the failure */
-				Clean_exit (ERROR_CREATING_NEW_SID, errno, FALSE, TRUE);
+				Clean_exit (ERROR_CREATING_NEW_SID, errno, false, true);
 			}
 
 			Vlogit (tll_debug,
@@ -987,12 +878,48 @@ int main (int argc, char *argv[])
 
 				errno = 0;
 
+				if ( (null_file_des = open (NULL_FILE_DEVICE, O_RDONLY, 0)) == -1)
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+
+				if (dup2 (null_file_des, STDIN_FILENO) == -1)
+				{
+					close (null_file_des);
+
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+				}
+
+				errno = 0;
+
+				if ( (null_file_des = open (NULL_FILE_DEVICE, O_WRONLY, 0)) == -1)
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+
+				if (dup2 (null_file_des, STDOUT_FILENO) == -1)
+				{
+					close (null_file_des);
+
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+				}
+
+				errno = 0;
+
+				if ( (null_file_des = open (NULL_FILE_DEVICE, O_WRONLY, 0)) == -1)
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+
+				if (dup2 (null_file_des, STDERR_FILENO) == -1)
+				{
+					close (null_file_des);
+
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
+				}
+
+				/*
 				if ( (close (STDIN_FILENO) != 0) ||
 						(close (STDOUT_FILENO) != 0) ||
-						(close (STDERR_FILENO) != 0) )
+						(close (STDERR_FILENO) != 0))
 				{
-					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, FALSE, TRUE);
+					Clean_exit (ERROR_CLOSING_STANDARD_FILE_DESCRIPTORS, errno, false, true);
 				}
+				*/
 
 				Vlogit (tll_debug,
 						LOG_MESSAGE_PREAMBLE,
@@ -1005,8 +932,8 @@ int main (int argc, char *argv[])
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 		/* ************************************************************************************** */
@@ -1023,7 +950,7 @@ int main (int argc, char *argv[])
 			if (close (listening_socket_fd) != 0)
 			{
 				/* Failed to close the socket. */
-				Messagewarning (ERROR_CLOSING_LISTENING_SOCKET, errno, FALSE);
+				Messagewarning (ERROR_CLOSING_LISTENING_SOCKET, errno, false);
 
 			}
 			else
@@ -1036,15 +963,14 @@ int main (int argc, char *argv[])
 						PROCESS_P_C (g_daemonized, g_processor),
 						getpid(), "Success closing the listening socket.");
 			}
-
 		}
 		/* ************************************************************************************** */
 
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 
@@ -1056,10 +982,10 @@ int main (int argc, char *argv[])
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "Setting socket time-outs...");
 
-		if (!Set_socket_timeouts (new_client_socket_fd, DEFAULT_TIME_OUT, DEFAULT_TIME_OUT) )
+		if (!Set_socket_timeouts (new_client_socket_fd, DEFAULT_TIME_OUT, DEFAULT_TIME_OUT))
 		{
 			/* failed to set socket timeouts. */
-			Clean_exit (ERROR_SETTING_SOCKET_TIME_OUTS, errno, FALSE, TRUE);
+			Clean_exit (ERROR_SETTING_SOCKET_TIME_OUTS, errno, false, true);
 		}
 
 		Vlogit (tll_debug,
@@ -1072,8 +998,8 @@ int main (int argc, char *argv[])
 
 		/* ************************************************** */
 		/* If the program is signaled to terminate. */
-		if (Is_signaled_to_terminate() )
-			Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+		if (Is_signaled_to_terminate())
+			Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 		/* ************************************************** */
 
 
@@ -1092,7 +1018,7 @@ int main (int argc, char *argv[])
 		if (close (new_client_socket_fd) != 0)
 		{
 			/* Failed to close the socket. */
-			Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, FALSE);
+			Messagewarning (ERROR_CLOSING_CLIENT_SOCKET, errno, false);
 		}
 		else
 			new_client_socket_fd = -1;
@@ -1100,14 +1026,14 @@ int main (int argc, char *argv[])
 		if (res != ERROR_SUCESS)
 		{
 			if (g_processor)
-				Clean_exit (res, errno, FALSE, TRUE);
+				Clean_exit (res, errno, false, true);
 			else
 			{
 				if (res == ERROR_INTERRUPTED)
-					Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+					Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 				else
 				{
-					Messageerror (res, errno, FALSE);
+					Messageerror (res, errno, false);
 					continue;
 				}
 			}
@@ -1121,9 +1047,7 @@ int main (int argc, char *argv[])
 					getpid(), "Success processing client.");
 
 			if (g_processor)
-			{
 				break;
-			}
 			else
 				continue;
 		}
@@ -1134,12 +1058,11 @@ int main (int argc, char *argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
-
-	Clean_exit (ERROR_SUCESS, 0, FALSE, FALSE);
+	Clean_exit (ERROR_SUCESS, 0, false, false);
 
 	return ERROR_SUCESS;
 }
@@ -1190,7 +1113,7 @@ static void Clean_exit (int istatus, const int syserror,
 	{
 		config_destroy (&cfg_file_info);
 
-		config_info_loaded = FALSE;
+		config_info_loaded = false;
 	}
 
 	Free_IP_addresses_info (&IP_addresses); /* Free IP_addresses. */
@@ -1226,22 +1149,23 @@ devuelve: -. (La función puede terminar el programa)
 */
 static void Parse_cmdline (int argc, char * const argv[])
 {
-	int ch;                                             /* Valor devuelto por la función getopt_long. */
+	int ch;
 	int array_opt_index = 0;
 	struct option optionarr[OPTIONS_COUNT + 1];
-	char short_opt_str[OPTIONS_COUNT*2 + 2];
-
+	char short_opt_str[OPTIONS_COUNT*3 + 2];
 	long int par_int;
 
+	memset (&optionarr, 0x00, sizeof (optionarr));
 
-	memset (&optionarr, 0x00, sizeof (optionarr) );
-
-	bzero (short_opt_str, sizeof (short_opt_str) );
+	bzero (short_opt_str, sizeof (short_opt_str));
 
 
 	Fill_getopt_long_options (optsextarr, optionarr, OPTIONS_COUNT);
 
-	Generate_short_options_string (short_opt_str, optsextarr, OPTIONS_COUNT, TRUE);
+	if (!Generate_short_options_string (short_opt_str, sizeof (short_opt_str),
+										optsextarr, OPTIONS_COUNT, true))
+		Clean_exit (ERROR_UNEXPECTED, errno, false, true);
+
 
 	/*
 	Llama repetidamente a la función getopt_long (devuelve el caracter que
@@ -1250,11 +1174,11 @@ static void Parse_cmdline (int argc, char * const argv[])
 	*/
 	opterr = 0;							/* getopt_long doesn't print errors. */
 	optind = 0;
-	array_opt_index = 0;				/* Inicializo array_opt_index (indice de opcion). */
+	array_opt_index = 0;
 
 	while ( ( (ch = getopt_long (argc, argv, short_opt_str,
-								 optionarr, &array_opt_index) ) != EOF) &&
-			(!Is_signaled_to_terminate() ) )
+								 optionarr, &array_opt_index)) != -1) &&
+			(!Is_signaled_to_terminate()))
 	{
 		option_with_error = argv[optind - 1 - ( (optarg != NULL) ? 1 : 0) ];
 
@@ -1268,21 +1192,21 @@ static void Parse_cmdline (int argc, char * const argv[])
 		{
 		case STR_VERSION_SHORT:
 
-			if ( (optind > 1) || (argc > 2) )
-				Messagewarning (ERROR_OPTION_VERSION_NOT_ALONE, 0, TRUE);
+			if (argc > 2)
+				Messagewarning (ERROR_OPTION_VERSION_NOT_ALONE, 0, true);
 
 			Do_version (argv[0]);
 			break;
 		case STR_HELP_SHORT:
 
-			if ( (optind > 1) || (argc > 2) )
-				Messagewarning (ERROR_OPTION_HELP_NOT_ALONE, 0, TRUE);
+			if ( (optind > 1) || (argc > 2))
+				Messagewarning (ERROR_OPTION_HELP_NOT_ALONE, 0, true);
 
 			Do_usage (ERROR_SUCESS);
 			break;
 		case STR_DAEMON_SHORT:
 
-			Do_daemon (TRUE);
+			Do_daemon (true);
 			break;
 		case STR_IP_SHORT:
 
@@ -1292,8 +1216,8 @@ static void Parse_cmdline (int argc, char * const argv[])
 			break;
 		case STR_PORT_SHORT:
 
-			if (!Validate_int_parameter (optarg, &par_int) )
-				Clean_exit (ERROR_BAD_PORT_NUMBER, errno, FALSE, TRUE);
+			if (!Validate_int_parameter (optarg, &par_int))
+				Clean_exit (ERROR_BAD_PORT_NUMBER, errno, false, true);
 
 			Do_port (par_int);
 			break;
@@ -1305,7 +1229,7 @@ static void Parse_cmdline (int argc, char * const argv[])
 			break;
 		case STR_SINGLE_SHORT:
 
-			Do_single (TRUE);
+			Do_single (true);
 			break;
 		case STR_USER_SHORT:
 
@@ -1350,8 +1274,8 @@ static void Parse_cmdline (int argc, char * const argv[])
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (optind < argc)
@@ -1369,7 +1293,7 @@ static void Parse_cmdline (int argc, char * const argv[])
 			optind++;
 		}
 
-		Clean_exit (ERROR_NON_OPTION_ARGUMENT_FOUND, 0, FALSE, TRUE);
+		Clean_exit (ERROR_NON_OPTION_ARGUMENT_FOUND, 0, false, true);
 	}
 }
 
@@ -1381,7 +1305,7 @@ static void Load_config_file (const char* config_file_name)
 
 	if (!b_opt_cfg_file_name ||
 			(b_opt_daemon && b_opt_IP && b_opt_port && b_opt_password &&
-			 b_opt_single && b_opt_user && b_opt_command && b_opt_log_level) )
+			 b_opt_single && b_opt_user && b_opt_command && b_opt_log_level))
 		return;
 
 	Vlogit (tll_debug,
@@ -1390,12 +1314,12 @@ static void Load_config_file (const char* config_file_name)
 			PROCESS_P_C (g_daemonized, g_processor),
 			getpid(), "Loading config file...");
 
-	memset (&cfg_file_info, 0x00, sizeof (cfg_file_info) );
+	memset (&cfg_file_info, 0x00, sizeof (cfg_file_info));
 
 	/*Initialization */
 	config_init (&cfg_file_info);
 
-	config_info_loaded = TRUE;
+	config_info_loaded = true;
 
 	/* Read the file. If there is an error, report it and exit. */
 	if (config_read_file (&cfg_file_info, config_file_name) != CONFIG_TRUE)
@@ -1408,27 +1332,27 @@ static void Load_config_file (const char* config_file_name)
 
 		config_destroy (&cfg_file_info);
 
-		config_info_loaded = FALSE;
+		config_info_loaded = false;
 
 		switch (err)
 		{
 		case CONFIG_ERR_FILE_IO:
-			Clean_exit (ERROR_CONFIG_FILE_READING, 0, FALSE, TRUE);
+			Clean_exit (ERROR_CONFIG_FILE_READING, 0, false, true);
 			break;
 		case CONFIG_ERR_PARSE:
-			Clean_exit (ERROR_CONFIG_FILE_PARSING, 0, FALSE, TRUE);
+			Clean_exit (ERROR_CONFIG_FILE_PARSING, 0, false, true);
 			break;
 		case CONFIG_ERR_NONE:
 		default:
-			Clean_exit (ERROR_CONFIG_FILE_UNKNOWN, 0, FALSE, TRUE);
+			Clean_exit (ERROR_CONFIG_FILE_UNKNOWN, 0, false, true);
 			break;
 		}
 	}
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_daemon)
@@ -1461,8 +1385,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_IP)
@@ -1485,9 +1409,9 @@ static void Load_config_file (const char* config_file_name)
 			{
 				config_destroy (&cfg_file_info);
 
-				config_info_loaded = FALSE;
+				config_info_loaded = false;
 
-				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, FALSE, TRUE);
+				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, false, true);
 			}
 
 			bzero (host_from_cfg, len + 1);
@@ -1514,8 +1438,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_port)
@@ -1548,8 +1472,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_password)
@@ -1572,9 +1496,9 @@ static void Load_config_file (const char* config_file_name)
 			{
 				config_destroy (&cfg_file_info);
 
-				config_info_loaded = FALSE;
+				config_info_loaded = false;
 
-				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, FALSE, TRUE);
+				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, false, true);
 			}
 
 			bzero (password_from_cfg, len + 1);
@@ -1601,8 +1525,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_single)
@@ -1635,8 +1559,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_user)
@@ -1659,9 +1583,9 @@ static void Load_config_file (const char* config_file_name)
 			{
 				config_destroy (&cfg_file_info);
 
-				config_info_loaded = FALSE;
+				config_info_loaded = false;
 
-				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, FALSE, TRUE);
+				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, false, true);
 			}
 
 			bzero (user_from_cfg, len + 1);
@@ -1688,8 +1612,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_command)
@@ -1712,9 +1636,9 @@ static void Load_config_file (const char* config_file_name)
 			{
 				config_destroy (&cfg_file_info);
 
-				config_info_loaded = FALSE;
+				config_info_loaded = false;
 
-				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, FALSE, TRUE);
+				Clean_exit (ERROR_ALLOCATING_MEMORY, errno, false, true);
 			}
 
 			bzero (command_from_cfg, len + 1);
@@ -1741,8 +1665,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_log_level)
@@ -1775,8 +1699,8 @@ static void Load_config_file (const char* config_file_name)
 
 	/* ************************************************** */
 	/* If the program is signaled to terminate. */
-	if (Is_signaled_to_terminate() )
-		Clean_exit (ERROR_INTERRUPTED, 0, FALSE, TRUE);
+	if (Is_signaled_to_terminate())
+		Clean_exit (ERROR_INTERRUPTED, 0, false, true);
 	/* ************************************************** */
 
 	if (!b_opt_log_level)
@@ -1809,7 +1733,7 @@ static void Load_config_file (const char* config_file_name)
 
 	config_destroy (&cfg_file_info);
 
-	config_info_loaded = FALSE;
+	config_info_loaded = false;
 
 	Vlogit (tll_debug,
 			LOG_MESSAGE_PREAMBLE,
@@ -1836,24 +1760,37 @@ static void Load_default_config()
 				LOG_DEFAULT_PARAMETERS_B,
 				LOGLEVELNAME (tll_info),
 				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), STR_DAEMON, BOOL_TO_STRING (DEFAULT_DAEMON) );
+				getpid(), STR_DAEMON, BOOL_TO_STRING (DEFAULT_DAEMON));
 	}
 
 	if (!b_opt_IP)
 	{
-		opt_IP = DEFAULT_IP;
-		actual_listen_IP = DEFAULT_IP;
+		if (DEFAULT_IP == NULL)
+			opt_IP = WILDCARD_STRING;
+
+		if (strcmp ( ( (DEFAULT_IP != NULL) ? DEFAULT_IP : EMPTY_STRING), WILDCARD_STRING) == 0)
+			actual_listen_IP = NULL;
+		else
+			actual_listen_IP = DEFAULT_IP;
+
+		if (!Validate_And_Parse_Host_Or_IP (actual_listen_IP, opt_port,
+											&IP_addresses, &network_syserror))
+			Clean_exit (ERROR_NOT_VALID_DEFAULT_IP_PORT, network_syserror, true, true);
 
 		Vlogit (tll_info,
 				LOG_DEFAULT_PARAMETERS_S,
 				LOGLEVELNAME (tll_info),
 				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), STR_IP, DEFAULT_IP);
+				getpid(), STR_IP, opt_IP);
 	}
 
 	if (!b_opt_port)
 	{
 		opt_port = DEFAULT_PORT;
+
+		if (!Validate_And_Parse_Host_Or_IP (actual_listen_IP, opt_port,
+											&IP_addresses, &network_syserror))
+			Clean_exit (ERROR_NOT_VALID_DEFAULT_IP_PORT, network_syserror, true, true);
 
 		Vlogit (tll_info,
 				LOG_DEFAULT_PARAMETERS_D,
@@ -1881,13 +1818,13 @@ static void Load_default_config()
 				LOG_DEFAULT_PARAMETERS_B,
 				LOGLEVELNAME (tll_info),
 				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), STR_SINGLE, BOOL_TO_STRING (DEFAULT_SINGLE) );
+				getpid(), STR_SINGLE, BOOL_TO_STRING (DEFAULT_SINGLE));
 	}
 
 	if (!b_opt_user)
 	{
 		opt_user = DEFAULT_USER;
-		Set_actual_log_level (opt_log_level, FALSE);
+		Set_actual_log_level (opt_log_level, false);
 
 		Vlogit (tll_info,
 				LOG_DEFAULT_PARAMETERS_S,
@@ -1922,35 +1859,13 @@ static void Load_default_config()
 	if (!b_opt_log_level)
 	{
 		opt_log_level = DEFAULT_LOG_LEVEL;
-		Set_actual_log_level (opt_log_level, FALSE);
+		Set_actual_log_level (opt_log_level, false);
 
 		Vlogit (tll_info,
 				LOG_DEFAULT_PARAMETERS_S,
 				LOGLEVELNAME (tll_info),
 				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), STR_LOG_LEVEL, LOGLEVELNAME (DEFAULT_LOG_LEVEL) );
-	}
-
-	/* Validate default Host\IP and port number (when both parameters were missing). */
-
-	if (!b_opt_IP && !b_opt_IP)
-	{
-		Vlogit (tll_debug,
-				LOG_MESSAGE_PREAMBLE,
-				LOGLEVELNAME (tll_debug),
-				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), "Validating default IP address and port...");
-
-
-		if (!Validate_And_Parse_Host_Or_IP (actual_listen_IP, opt_port,
-											&IP_addresses, &network_syserror) )
-			Clean_exit (ERROR_NOT_VALID_DEFAULT_IP_PORT, network_syserror, TRUE, TRUE);
-
-		Vlogit (tll_debug,
-				LOG_MESSAGE_PREAMBLE,
-				LOGLEVELNAME (tll_debug),
-				PROCESS_P_C (g_daemonized, g_processor),
-				getpid(), "Success validating default IP address and port.");
+				getpid(), STR_LOG_LEVEL, LOGLEVELNAME (DEFAULT_LOG_LEVEL));
 	}
 }
 
@@ -1960,8 +1875,8 @@ static void Load_default_config()
 */
 static void Validate_str_parameter (const char *pcargs)
 {
-	if (!pcargs || !strlen (pcargs) )
-		Clean_exit (ERROR_MISSING_REQUIRED_PARAMETER, 0, FALSE, TRUE);
+	if (!pcargs || !strlen (pcargs))
+		Clean_exit (ERROR_MISSING_REQUIRED_PARAMETER, 0, false, true);
 }
 
 
@@ -1970,8 +1885,8 @@ static void Validate_str_parameter (const char *pcargs)
 */
 static bool Validate_int_parameter (const char *pcargs, long int* par)
 {
-	if (!pcargs || !strlen (pcargs) )
-		Clean_exit (ERROR_MISSING_REQUIRED_PARAMETER, 0, FALSE, TRUE);
+	if (!pcargs || !strlen (pcargs))
+		Clean_exit (ERROR_MISSING_REQUIRED_PARAMETER, 0, false, true);
 
 	return Convert_num_val (pcargs, par);
 }
@@ -1991,7 +1906,7 @@ devuelve: -.
 static void Do_usage (const int istatus)
 {
 	if (istatus != ERROR_SUCESS)
-		Messageerror (istatus, 0, FALSE);
+		Messageerror (istatus, 0, false);
 
 	fprintf (stderr, STR_USAGE_TEXT, STR_PROGRAM_NAME, STR_PROGRAM_NAME, STR_PROGRAM_NAME);
 
@@ -2000,7 +1915,7 @@ static void Do_usage (const int istatus)
 	fprintf (stderr, STR_EXAMP_TEXT, STR_PROGRAM_NAME, STR_PROGRAM_NAME, STR_PROGRAM_NAME,
 			 STR_PROGRAM_NAME, STR_PROGRAM_NAME);
 
-	Clean_exit (istatus, 0, FALSE, FALSE);
+	Clean_exit (istatus, 0, false, false);
 }
 
 
@@ -2014,12 +1929,6 @@ devuelve: -.
 */
 static void Do_version()
 {
-	Vlogit (tll_debug,
-			LOG_MESSAGE_PREAMBLE,
-			LOGLEVELNAME (tll_debug),
-			PROCESS_P_C (g_daemonized, g_processor),
-			getpid(), "Parsing \"-V\" option...");
-
 	fprintf (stderr, STR_VERSION_DESCRIPTION, STR_PROGRAM_INTERNAL_NAME,
 			 VERSION_MAJOR, VERSION_MINOR, BUILD_NUMBER, VERSION_TYPE);
 
@@ -2040,7 +1949,7 @@ static void Do_version()
 #endif
 #endif
 
-	Clean_exit (ERROR_SUCESS, 0, FALSE, FALSE);
+	Clean_exit (ERROR_SUCESS, 0, false, false);
 }
 
 
@@ -2055,9 +1964,9 @@ devuelve: -.
 static void Do_daemon (bool daemon)
 {
 	if (b_opt_daemon)                                /* Opción repetida. */
-		Clean_exit (ERROR_ONLY_ONE_DAEMON, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_DAEMON, 0, false, true);
 
-	b_opt_daemon = TRUE;
+	b_opt_daemon = true;
 
 	opt_daemon = daemon;
 }
@@ -2078,9 +1987,9 @@ static void Do_host (const char *host)
 	int network_syserror;
 
 	if (b_opt_IP)
-		Clean_exit (ERROR_ONLY_ONE_IP, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_IP, 0, false, true);
 
-	b_opt_IP = TRUE;
+	b_opt_IP = true;
 
 	opt_IP = host;
 
@@ -2090,8 +1999,8 @@ static void Do_host (const char *host)
 		actual_listen_IP = host;
 
 	if (!Validate_And_Parse_Host_Or_IP (actual_listen_IP, b_opt_port ? opt_port : DEFAULT_PORT,
-										&IP_addresses, &network_syserror) )
-		Clean_exit (ERROR_NOT_VALID_IP, network_syserror, TRUE, TRUE);
+										&IP_addresses, &network_syserror))
+		Clean_exit (ERROR_NOT_VALID_IP, network_syserror, true, true);
 }
 
 
@@ -2110,19 +2019,19 @@ static void Do_port (const long int  port)
 	int network_syserror;
 
 	if (b_opt_port)
-		Clean_exit (ERROR_ONLY_ONE_PORT, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_PORT, 0, false, true);
 
-	b_opt_port = TRUE;
+	b_opt_port = true;
 
 	/* Range check [MIN_VALID_PORT; MAX_VALID_PORT]. */
-	if ( (port < MIN_VALID_PORT) || (port > MAX_VALID_PORT) )
-		Clean_exit (ERROR_PORT_NUMBER_OUT_OF_RANGE, 0, FALSE, TRUE);
+	if ( (port < MIN_VALID_PORT) || (port > MAX_VALID_PORT))
+		Clean_exit (ERROR_PORT_NUMBER_OUT_OF_RANGE, 0, false, true);
 
 	opt_port = port;
 
 	if (!Validate_And_Parse_Host_Or_IP (b_opt_IP ? actual_listen_IP : DEFAULT_IP, opt_port,
-										&IP_addresses, &network_syserror) )
-		Clean_exit (ERROR_NOT_VALID_IP, network_syserror, TRUE, TRUE);
+										&IP_addresses, &network_syserror))
+		Clean_exit (ERROR_NOT_VALID_IP, network_syserror, true, true);
 }
 
 
@@ -2139,9 +2048,9 @@ devuelve: -.
 static void Do_password (const char *password)
 {
 	if (b_opt_password)
-		Clean_exit (ERROR_ONLY_ONE_PASSWORD, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_PASSWORD, 0, false, true);
 
-	b_opt_password = TRUE;
+	b_opt_password = true;
 
 	opt_password = password;
 }
@@ -2162,35 +2071,35 @@ static void Do_log_level (const char* loglevel)
 	long int level;
 
 	if (b_opt_log_level)
-		Clean_exit (ERROR_ONLY_ONE_LOG_LEVEL, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_LOG_LEVEL, 0, false, true);
 
-	b_opt_log_level = TRUE;
+	b_opt_log_level = true;
 
-	if ( (strlen (loglevel) == strlen (STR_DEBUG) ) && (strncasecmp (loglevel, STR_DEBUG, strlen (STR_DEBUG) ) == 0) )
+	if ( (strlen (loglevel) == strlen (STR_DEBUG)) && (strncasecmp (loglevel, STR_DEBUG, strlen (STR_DEBUG)) == 0))
 	{
 		level = LL_DEBUG;
 	}
-	else if ( (strlen (loglevel) == strlen (STR_INFO) ) && (strncasecmp (loglevel, STR_INFO, strlen (STR_INFO) ) == 0) )
+	else if ( (strlen (loglevel) == strlen (STR_INFO)) && (strncasecmp (loglevel, STR_INFO, strlen (STR_INFO)) == 0))
 	{
 		level = LL_INFO;
 	}
-	else if ( (strlen (loglevel) == strlen (STR_ERROR) ) && (strncasecmp (loglevel, STR_ERROR, strlen (STR_ERROR) ) == 0) )
+	else if ( (strlen (loglevel) == strlen (STR_ERROR)) && (strncasecmp (loglevel, STR_ERROR, strlen (STR_ERROR)) == 0))
 	{
 		level = LL_ERROR;
 	}
 	else
 	{
-		if (!Convert_num_val (loglevel, &level) )
-			Clean_exit (ERROR_BAD_LOG_LEVEL_NUMBER, errno, FALSE, TRUE);
+		if (!Convert_num_val (loglevel, &level))
+			Clean_exit (ERROR_BAD_LOG_LEVEL_NUMBER, errno, false, true);
 
 		/* Verifico que el número pasado esté en el rango válido. */
-		if ( (level < LL_MIN) || (level > LL_MAX) )
-			Clean_exit (ERROR_LOG_LEVEL_OUT_OF_RANGE, 0, FALSE, TRUE);
+		if ( (level < LL_MIN) || (level > LL_MAX))
+			Clean_exit (ERROR_LOG_LEVEL_OUT_OF_RANGE, 0, false, true);
 	}
 
 	opt_log_level = (TLogLevel) level;
 
-	Set_actual_log_level (opt_log_level, FALSE);
+	Set_actual_log_level (opt_log_level, false);
 }
 
 
@@ -2207,17 +2116,17 @@ devuelve: -.
 static void Do_int_log_level (const long int loglevel)
 {
 	if (b_opt_log_level)
-		Clean_exit (ERROR_ONLY_ONE_LOG_LEVEL, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_LOG_LEVEL, 0, false, true);
 
-	b_opt_log_level = TRUE;
+	b_opt_log_level = true;
 
 	/* Verifico que el número pasado esté en el rango válido. */
-	if ( (loglevel < LL_MIN) || (loglevel > LL_MAX) )
-		Clean_exit (ERROR_LOG_LEVEL_OUT_OF_RANGE, 0, FALSE, TRUE);
+	if ( (loglevel < LL_MIN) || (loglevel > LL_MAX))
+		Clean_exit (ERROR_LOG_LEVEL_OUT_OF_RANGE, 0, false, true);
 
 	opt_log_level = (TLogLevel) loglevel;
 
-	Set_actual_log_level (opt_log_level, FALSE);
+	Set_actual_log_level (opt_log_level, false);
 }
 
 
@@ -2234,9 +2143,9 @@ devuelve: -.
 static void Do_single (bool single)
 {
 	if (b_opt_single)
-		Clean_exit (ERROR_ONLY_ONE_SINGLE, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_SINGLE, 0, false, true);
 
-	b_opt_single = TRUE;
+	b_opt_single = true;
 
 	opt_single = single;
 }
@@ -2255,14 +2164,14 @@ devuelve: -.
 static void Do_user_group (const char *user)
 {
 	if (b_opt_user)
-		Clean_exit (ERROR_ONLY_ONE_USER, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_USER, 0, false, true);
 
-	b_opt_user = TRUE;
+	b_opt_user = true;
 
 	opt_user = user;
 
-	if (!Get_uid_and_gid_from_string (opt_user, &user_uid, &user_gid, &user_is_primary_group) )
-		Clean_exit (ERROR_INVALID_USER_GROUP, 0, FALSE, TRUE);
+	if (!Get_uid_and_gid_from_string (opt_user, &user_uid, &user_gid, &user_is_primary_group))
+		Clean_exit (ERROR_INVALID_USER_GROUP, 0, false, true);
 }
 
 
@@ -2279,9 +2188,9 @@ devuelve: -.
 static void Do_command (const char *command)
 {
 	if (b_opt_command)
-		Clean_exit (ERROR_ONLY_ONE_COMMAND, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_COMMAND, 0, false, true);
 
-	b_opt_command = TRUE;
+	b_opt_command = true;
 
 	opt_command = command;
 }
@@ -2293,9 +2202,9 @@ static void Do_command (const char *command)
 static void Do_config_file (const char *config_file)
 {
 	if (b_opt_cfg_file_name)
-		Clean_exit (ERROR_ONLY_ONE_CONFIG_FILE, 0, FALSE, TRUE);
+		Clean_exit (ERROR_ONLY_ONE_CONFIG_FILE, 0, false, true);
 
-	b_opt_cfg_file_name = TRUE;
+	b_opt_cfg_file_name = true;
 
 	opt_cfg_file_name = config_file;
 }
@@ -2306,7 +2215,7 @@ static void Do_config_file (const char *config_file)
 */
 static inline bool Can_drop_root_privileges (bool root_privileges_needed)
 {
-	return (!root_privileges_needed || (opt_port > 1023) );
+	return (!root_privileges_needed || (opt_port > 1023));
 }
 
 
@@ -2316,7 +2225,7 @@ static inline bool Can_drop_root_privileges (bool root_privileges_needed)
 static bool try_to_drop_root_privileges (bool root_privileges_droped, bool root_privileges_needed)
 {
 	if ( (!root_privileges_droped) && Do_i_have_root_privileges() &&
-			Can_drop_root_privileges (root_privileges_needed) )
+			Can_drop_root_privileges (root_privileges_needed))
 	{
 		/* ************************************************************************************** */
 		/* Drop root privileges. */
@@ -2329,9 +2238,9 @@ static bool try_to_drop_root_privileges (bool root_privileges_droped, bool root_
 					PROCESS_P_C (g_daemonized, g_processor),
 					getpid(), "Dropping root privileges...");
 
-			if (!Drop_privileges (user_uid, user_gid, user_is_primary_group) )
+			if (!Drop_privileges (user_uid, user_gid, user_is_primary_group))
 			{
-				Clean_exit (ERROR_DROPPING_ROOT_PRIVILEGES, errno, FALSE, TRUE);
+				Clean_exit (ERROR_DROPPING_ROOT_PRIVILEGES, errno, false, true);
 			}
 
 			Vlogit (tll_debug,
@@ -2345,17 +2254,17 @@ static bool try_to_drop_root_privileges (bool root_privileges_droped, bool root_
 					LOGLEVELNAME (tll_debug),
 					PROCESS_P_C (g_daemonized, g_processor),
 					getpid(),
-					getuid(), geteuid(), getgid(), getegid() );
+					getuid(), geteuid(), getgid(), getegid());
 
 
-			return TRUE;
+			return true;
 		}
 		else
-			return FALSE;
+			return false;
 		/* ************************************************************************************** */
 	}
 	else
-		return FALSE;
+		return false;
 }
 
 
@@ -2381,7 +2290,7 @@ static void Signal_handler (int sig)
 
 		/*if ( ( (daemon_pid != 0) && (pid == daemon_pid)) || ( (parent_pid != 0) && (pid == parent_pid)))*/
 
-		while ( (child_pid = waitpid (-1, NULL, WNOHANG) ) > 0)
+		while ( (child_pid = waitpid (-1, NULL, WNOHANG)) > 0)
 		{
 			Vlogit (tll_debug,
 					LOG_CHILD_DIED,
@@ -2405,7 +2314,7 @@ static void Signal_handler (int sig)
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "\"SIGTERM\" signal catched.");
 
-		Signal_to_terminate (TRUE);
+		Signal_to_terminate (true);
 		break;
 	case SIGINT:
 		Vlogit (tll_info,
@@ -2414,7 +2323,7 @@ static void Signal_handler (int sig)
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "\"SIGINT\" signal catched.");
 
-		Signal_to_terminate (TRUE);
+		Signal_to_terminate (true);
 		break;
 	case SIGQUIT:
 		Vlogit (tll_info,
@@ -2423,7 +2332,7 @@ static void Signal_handler (int sig)
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "\"SIGQUIT\" signal catched.");
 
-		Signal_to_terminate (TRUE);
+		Signal_to_terminate (true);
 		break;
 	case SIGALRM:
 		Vlogit (tll_info,
@@ -2439,7 +2348,7 @@ static void Signal_handler (int sig)
 				PROCESS_P_C (g_daemonized, g_processor),
 				getpid(), "\"SIGSEGV\" signal catched, oops!!!.");
 
-		Clean_exit (ERROR_SEGMENTATION_FAULT, 0, FALSE, TRUE);
+		Clean_exit (ERROR_SEGMENTATION_FAULT, 0, false, true);
 		break;
 	default:
 		Vlogit (tll_info,
@@ -2458,7 +2367,7 @@ static void Catch_signals (t_signal_handler handler, bool catch_SIGCHLD)
 {
 	struct sigaction hand;
 
-	memset (&hand, 0x00, sizeof (hand) );
+	memset (&hand, 0x00, sizeof (hand));
 
 	hand.sa_handler = handler;
 	sigemptyset (&hand.sa_mask);

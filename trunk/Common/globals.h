@@ -8,11 +8,11 @@
 /* ******************************************************** */
 /* NON LOCALIZABLE!!!!!!!!! */
 
-#define FALSE 0
-#define TRUE 1
+#define false 0
+#define true 1
 
-#define STR_TRUE "TRUE"
-#define STR_FALSE "FALSE"
+#define STR_TRUE "true"
+#define STR_FALSE "false"
 
 #define LINE_BUFFER_SIZE					512
 
@@ -27,6 +27,7 @@
 #define MAX_VALID_PORT						UINT16_MAX
 #define MAX_VALID_PORT_STR_LEN				5
 
+#define NULL_FILE_DEVICE					"/dev/null"
 
 /* ******************************************************** */
 

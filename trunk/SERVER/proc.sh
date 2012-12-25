@@ -5,6 +5,8 @@ function pause(){
 	read -p "$PRESSANYKEY"
 }
 
+echo "JAJAJAJAJAJAJAJAJAJAJAJAJAJA" >&2
+
 
 echo "HELLO"
 

@@ -22,7 +22,7 @@ void Fill_getopt_long_options(const struct option_ext optsext[], struct option o
 
 void Print_help(FILE * outputfile, const struct option_ext optsext[], size_t optcount);
 
-void Generate_short_options_string(char* opts, const struct option_ext optsext[], size_t optcount, bool noerrors);
+bool Generate_short_options_string(char* opts, size_t, const struct option_ext optsext[], size_t optcount, bool noerrors);
 
 
 #endif /* _GETOPTEXT_H_INCLUDED_ */

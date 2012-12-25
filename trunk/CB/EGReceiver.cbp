@@ -10,11 +10,11 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\EGReceiver" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Debug\" />
+				<Option output="bin/Debug/EGReceiver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='-f &quot;/home/bakaneko/Documents/EGResponder/EG_RESPONDER/SERVER/server.conf&quot;' />
+				<Option parameters='-f &quot;/home/bakaneko/Documents/EGResponder/EG/SERVER/server.conf&quot;' />
 				<Compiler>
 					<Add option="-pedantic-errors" />
 					<Add option="-pedantic" />
@@ -33,8 +33,8 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin\Release\EGReceiver" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj\Release\" />
+				<Option output="bin/Release/EGReceiver" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -61,45 +61,45 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="SERVER\makefile" />
-		<Unit filename="..\Common\getopt_ext\getoptext.c">
+		<Unit filename="SERVER/makefile" />
+		<Unit filename="../Common/getopt_ext/getoptext.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\Common\getopt_ext\getoptext.h" />
-		<Unit filename="..\Common\globals.c">
+		<Unit filename="../Common/getopt_ext/getoptext.h" />
+		<Unit filename="../Common/globals.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\Common\globals.h" />
-		<Unit filename="..\Common\md5\md5.c">
+		<Unit filename="../Common/globals.h" />
+		<Unit filename="../Common/md5/md5.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\Common\md5\md5.h" />
-		<Unit filename="..\Common\network\network.c">
+		<Unit filename="../Common/md5/md5.h" />
+		<Unit filename="../Common/network/network.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\Common\network\network.h" />
-		<Unit filename="..\Common\popen_ext\popenext.c">
+		<Unit filename="../Common/network/network.h" />
+		<Unit filename="../Common/popen_ext/popenext.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\Common\popen_ext\popenext.h" />
-		<Unit filename="..\SERVER\Server.c">
+		<Unit filename="../Common/popen_ext/popenext.h" />
+		<Unit filename="../SERVER/Server.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SERVER\Server.h" />
-		<Unit filename="..\SERVER\dropprivileges.c">
+		<Unit filename="../SERVER/Server.h" />
+		<Unit filename="../SERVER/dropprivileges.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SERVER\dropprivileges.h" />
-		<Unit filename="..\SERVER\exiterror.c">
+		<Unit filename="../SERVER/dropprivileges.h" />
+		<Unit filename="../SERVER/exiterror.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SERVER\exiterror.h" />
-		<Unit filename="..\SERVER\proc.sh" />
-		<Unit filename="..\SERVER\processclient.c">
+		<Unit filename="../SERVER/exiterror.h" />
+		<Unit filename="../SERVER/proc.sh" />
+		<Unit filename="../SERVER/processclient.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\SERVER\processclient.h" />
-		<Unit filename="..\SERVER\server.conf" />
+		<Unit filename="../SERVER/processclient.h" />
+		<Unit filename="../SERVER/server.conf" />
 		<Extensions>
 			<code_completion />
 			<debugger />

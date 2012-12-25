@@ -20,7 +20,7 @@
 
 
 
-bool program_terminated = FALSE;
+bool program_terminated = false;
 
 
 
@@ -78,11 +78,11 @@ bool Copy_string (char** dest, const char* src)
 	*dest = malloc (len + 1);
 
 	if (*dest == NULL)
-		return FALSE;
+		return false;
 
 	strncpy (*dest, src, len + 1);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -105,13 +105,13 @@ bool Luint_to_string (char** dest, const unsigned long int src)
 	*dest = malloc (len + 1);
 
 	if (*dest == NULL)
-		return FALSE;
+		return false;
 
 	bzero (*dest, len + 1);
 
 	sprintf (*dest, "%lu", (unsigned long int) src);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -162,7 +162,7 @@ bool Hash_cookied_password (const char* password, const char* cookie, char* hash
 	for (di = 0; di < 16; ++di)
 		snprintf (hash + di * 2, 3, "%02x", digest[di]);
 
-	return TRUE;
+	return true;
 }
 
 /*
@@ -195,12 +195,12 @@ bool Convert_between_latin15_and_current_locale (const char* input, char** outpu
 	cd = iconv_open (to_utf8 ? CURRENT_LOCALE : ISO_8859_15, to_utf8 ? ISO_8859_15 : CURRENT_LOCALE); /*ISO_8859-15 OR CP1252*/
 
 	if (cd == (iconv_t) - 1)
-		return FALSE;
+		return false;
 
 	out_buf = (*output = malloc (output_size));
 
 	if (*output == NULL)
-		return FALSE;
+		return false;
 
 	out_left = output_size;
 
@@ -215,7 +215,7 @@ bool Convert_between_latin15_and_current_locale (const char* input, char** outpu
 			free (*output);
 			*output = NULL;
 
-			return FALSE;
+			return false;
 		}
 		else if (errno == E2BIG)
 		{
@@ -229,7 +229,7 @@ bool Convert_between_latin15_and_current_locale (const char* input, char** outpu
 
 				free (*output);
 
-				return FALSE;
+				return false;
 			}
 
 			*output = out_buf;
@@ -241,7 +241,7 @@ bool Convert_between_latin15_and_current_locale (const char* input, char** outpu
 
 	*out_buf = '\0';
 
-	return TRUE;
+	return true;
 }
 
 
@@ -257,7 +257,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 
 	*line_buffer = NULL;
 
-	*eof_found = FALSE;
+	*eof_found = false;
 
 
 	/* Check parameters.*/
@@ -277,7 +277,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 	{
 		*line_buffer = NULL;
 		*line_len = 0;
-		return FALSE;
+		return false;
 	}
 
 	errno = 0;
@@ -295,7 +295,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 		free (*line_buffer);
 		*line_buffer = NULL;
 		*line_len = 0;
-		return FALSE;
+		return false;
 	}
 
 	if ( (*line_buffer) [ (*line_len) - 1] != (delim_CR ? '\r' : '\n'))
@@ -303,7 +303,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 		free (*line_buffer);
 		*line_buffer = NULL;
 		*line_len = 0;
-		return FALSE;
+		return false;
 	}
 
 	(*line_len)--;
@@ -316,7 +316,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 			free (*line_buffer);
 			*line_buffer = NULL;
 			*line_len = 0;
-			return FALSE;
+			return false;
 		}
 
 		(*line_len)--;
@@ -325,12 +325,12 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 
 	if (convert_to_utf8)
 	{
-		if (!Convert_between_latin15_and_current_locale (*line_buffer, &utf8_line, TRUE))
+		if (!Convert_between_latin15_and_current_locale (*line_buffer, &utf8_line, true))
 		{
 			free (*line_buffer);
 			*line_buffer = NULL;
 			*line_len = 0;
-			return FALSE;
+			return false;
 		}
 
 		free (*line_buffer);
@@ -338,7 +338,7 @@ bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_l
 		*line_buffer = utf8_line;
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -421,7 +421,7 @@ bool Add_string_to_string_array (char*** list, size_t* array_len, size_t* buffer
 	new_str = malloc (str_len + 1);
 
 	if (new_str == NULL)
-		return TRUE;
+		return true;
 
 	bzero (new_str, str_len + 1);
 
@@ -430,10 +430,10 @@ bool Add_string_to_string_array (char*** list, size_t* array_len, size_t* buffer
 	if (!Insert_string_to_string_array (list, array_len, buffer_len, new_str))
 	{
 		free (new_str);
-		return FALSE;
+		return false;
 	}
 	else
-		return TRUE;
+		return true;
 }
 
 
@@ -461,7 +461,7 @@ bool Add_luint_to_string_array (char*** list, size_t* array_len, size_t* buffer_
 	new_str = malloc (str_len + 1);
 
 	if (new_str == NULL)
-		return TRUE;
+		return true;
 
 	bzero (new_str, str_len + 1);
 
@@ -470,10 +470,10 @@ bool Add_luint_to_string_array (char*** list, size_t* array_len, size_t* buffer_
 	if (!Insert_string_to_string_array (list, array_len, buffer_len, new_str))
 	{
 		free (new_str);
-		return FALSE;
+		return false;
 	}
 	else
-		return TRUE;
+		return true;
 }
 
 
@@ -544,7 +544,7 @@ static inline bool Insert_string_to_string_array (char*** list, size_t* array_le
 		new_list = realloc ( (*list), (*buffer_len + expandsize) * sizeof (char*));
 
 		if (new_list == NULL)
-			return FALSE;
+			return false;
 
 		(*list) = new_list;
 
@@ -558,7 +558,7 @@ static inline bool Insert_string_to_string_array (char*** list, size_t* array_le
 
 	(*list) [ (*array_len) - 1] = new_str;
 
-	return TRUE;
+	return true;
 }
 
 

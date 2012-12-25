@@ -16,8 +16,8 @@
 /*//////////////////// Constantes globales del programa - BEGIN - ///////////////////////*/
 /*///////////////////////////////////////////////////////////////////////////////////////*/
 
-#define FALSE 0
-#define TRUE 1
+#define false 0
+#define true 1
 
 
 /*///////////////////// Constantes globales del programa - END - ////////////////////////*/
@@ -63,12 +63,12 @@ bool Read_line(int socket_fd, char* line, size_t buffer_line_len, bool read_CR, 
 	byte_count = read(socket_fd, line, buffer_line_len - 1);
 
 	if(byte_count < 0)
-		return FALSE;
+		return false;
 
 	pcrr_char = strchr(line, LF_CHAR);
 
 	if(pcrr_char == NULL)
-		return FALSE;
+		return false;
 
 	*line_len = pcrr_char - line;
 
@@ -77,14 +77,14 @@ bool Read_line(int socket_fd, char* line, size_t buffer_line_len, bool read_CR, 
 		pnewline_char = pcrr_char + 1;
 
 		if(*pnewline_char != CR_CHAR)
-			return FALSE;
+			return false;
 
 		*pnewline_char = NULL_CHAR;
 	}
 
 	*pcrr_char = NULL_CHAR;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -123,9 +123,9 @@ static bool Write_line(int socket_fd, char* line, bool write_CR)
 	free(buffer);
 
 	if(byte_count != (int) len)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -149,7 +149,7 @@ static bool Hash_salted_password(const char* password, const char* salt, char* h
 	for(di = 0; di < 16; ++di)
 		snprintf(hash + di * 2, 3, "%02x", digest[di]);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 
 
     /* Send Magic word to the server */
-    if (!Write_line(sockfd, MAGIC_WORD, TRUE))
+    if (!Write_line(sockfd, MAGIC_WORD, true))
     {
         perror("ERROR writing to socket");
         exit(1);
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 	bzero(line, sizeof(line));
 
 
-	if(!Read_line(sockfd, line, BUFFER_SIZE, FALSE, &line_len))
+	if(!Read_line(sockfd, line, BUFFER_SIZE, false, &line_len))
     {
         perror("ERROR reading from socket");
         exit(1);
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 
 
     /* Send Hash */
-    if (!Write_line(sockfd, hash, FALSE))
+    if (!Write_line(sockfd, hash, false))
     {
         perror("ERROR writing to socket");
         exit(1);
@@ -239,21 +239,21 @@ int main(int argc, char *argv[])
 	bzero(line, sizeof(line));
 
 	/* Read accept */
-	if(!Read_line(sockfd, line, BUFFER_SIZE, FALSE, &line_len))
+	if(!Read_line(sockfd, line, BUFFER_SIZE, false, &line_len))
     {
         perror("ERROR reading accept confirmation");
         exit(1);
     }
 
     /* Send Hash */
-    if (!Write_line(sockfd, "HOLA", FALSE))
+    if (!Write_line(sockfd, "HOLA", false))
     {
         perror("ERROR writing event");
         exit(1);
     }
 
     /* Send Hash */
-    if (!Write_line(sockfd, "close", FALSE))
+    if (!Write_line(sockfd, "close", false))
     {
         perror("ERROR writing close command");
         exit(1);
