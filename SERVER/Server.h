@@ -7,18 +7,18 @@
 
 
 /* ******************************************************** */
-/* NON LOCALIZABLE!!!!!!!!! */
+/* NON LOCALIZABLE!!!!!!!!! - BEGIN */
 
 #define WORKING_DIR							"/"
 #define FILE_MASK							0
 
-#define DEFAULT_DAEMON						FALSE
+#define DEFAULT_DAEMON						false
 #define DEFAULT_PORT						1024
-#define DEFAULT_IP							"0.0.0.0"
+#define DEFAULT_IP							NULL
 #define DEFAULT_PASSWORD					""
 #define DEFAULT_COMMAND						NULL
 #define DEFAULT_CONFIG_FILE_NAME			NULL
-#define DEFAULT_SINGLE						FALSE
+#define DEFAULT_SINGLE						false
 #define DEFAULT_USER						NULL
 #ifdef NDEBUG
 #define DEFAULT_LOG_LEVEL					tll_error
@@ -55,7 +55,7 @@
 #if VERSION_MINOR <= 8
 #define VERSION_TYPE						" (Alpha)"
 #else
-#define VERSION_TYPE						" (Bchar** incompatible with const char **eta)"
+#define VERSION_TYPE						" (Beta)"
 #endif
 #else
 #define VERSION_TYPE						""
@@ -106,7 +106,7 @@
 #define STR_CONFIG_FILE_SHORT				'f'
 #define STR_LOG_LEVEL_SHORT					'l'
 
-
+/* NON LOCALIZABLE!!!!!!!!! - END */
 /* ******************************************************** */
 
 

@@ -66,7 +66,7 @@ bool Validate_And_Parse_Host_Or_IP (const char *ipAddress, const uint16_t tcp_po
 	res = snprintf (str_tcp_port, sizeof (str_tcp_port), "%lu", (long unsigned int) tcp_port);
 
 	if ( (res < 1) || (res >= (int) sizeof (str_tcp_port)))
-		return FALSE;
+		return false;
 
 	memset (&hints, 0, sizeof (hints));
 
@@ -86,15 +86,15 @@ bool Validate_And_Parse_Host_Or_IP (const char *ipAddress, const uint16_t tcp_po
 
 	if (*net_errorno == 0)
 	{
-		IP_adresses->filled = TRUE;
+		IP_adresses->filled = true;
 
-		return TRUE;
+		return true;
 	}
 	else
 	{
 		memset (IP_adresses, 0x00, sizeof (*IP_adresses));
 
-		return FALSE;
+		return false;
 	}
 }
 
@@ -169,7 +169,7 @@ bool Set_socket_timeouts (const int socket_fd, const double read_timeout, const 
 	struct timeval time;
 
 	if (socket_fd < 0)
-		return FALSE;
+		return false;
 
 	time.tv_sec = read_timeout;
 	time.tv_usec = ( (read_timeout - (double) time.tv_sec) * 1000000);
@@ -177,7 +177,7 @@ bool Set_socket_timeouts (const int socket_fd, const double read_timeout, const 
 	errno = 0;
 
 	if (setsockopt (socket_fd, SOL_SOCKET, SO_RCVTIMEO, &time, sizeof (struct timeval)) != 0)
-		return FALSE;
+		return false;
 
 
 	time.tv_sec = write_timeout;
@@ -199,12 +199,12 @@ bool Set_socket_options (const int socket_fd)
 #endif
 
 	if (socket_fd < 0)
-		return FALSE;
+		return false;
 
 #ifdef DEBUG
 	return (setsockopt (socket_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof (optval)) == 0);
 #else
-	return TRUE;
+	return true;
 #endif
 }
 
@@ -232,7 +232,7 @@ bool Accept_new_client (const int socket_fd, int* socket_new_fd, bool* is_IPV6, 
 
 	struct sockaddr* paddr = NULL;
 
-	bool failed = TRUE;
+	bool failed = true;
 
 
 	/* Check parameters.*/
@@ -294,7 +294,7 @@ void Free_IP_addresses_info (struct t_IP_addresses_info* IP_adresses)
 		Free_IP_addreses ( (struct addrinfo *) IP_adresses->addressses);
 
 	IP_adresses->addressses = NULL;
-	IP_adresses->filled = FALSE;
+	IP_adresses->filled = false;
 }
 
 
@@ -321,14 +321,14 @@ bool Dns_look_up_address (struct sockaddr* addr, char** str_name)
 	len = Get_addr_size_from_sockaddr (addr);
 
 	if (len == 0)
-		return FALSE;
+		return false;
 
 	errno = 0;
 
 	*str_name = malloc (name_buffer_len + 1);
 
 	if (*str_name == NULL)
-		return FALSE;
+		return false;
 
 	do
 	{
@@ -353,7 +353,7 @@ bool Dns_look_up_address (struct sockaddr* addr, char** str_name)
 			if (new_buff == NULL)
 			{
 				Free_string (str_name);
-				return FALSE;
+				return false;
 			}
 
 			*str_name = new_buff;
