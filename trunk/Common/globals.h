@@ -100,7 +100,7 @@ bool Hash_cookied_password(const char*, const char*, char*, size_t);
 
 bool Convert_between_latin15_and_current_locale(const char*, char**, bool);
 
-bool Read_stripped_line(FILE *, char**, size_t*, size_t*, bool*, bool, bool);
+bool Read_line(FILE *, char**, size_t*, size_t*, bool*, bool, bool);
 
 inline bool Write_line (FILE *, const char*);
 
