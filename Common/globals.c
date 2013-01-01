@@ -248,7 +248,7 @@ bool Convert_between_latin15_and_current_locale (const char* input, char** outpu
 /*
 
 */
-bool Read_stripped_line (FILE *input_lines, char** line_buffer, size_t* buffer_len, size_t* line_len,
+bool Read_line (FILE *input_lines, char** line_buffer, size_t* buffer_len, size_t* line_len,
 						 bool* eof_found, bool delim_CR, bool convert_to_utf8)
 {
 	ssize_t readed;

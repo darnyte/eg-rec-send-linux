@@ -30,7 +30,7 @@
 
 #define MAGIC_WORD					"quintessence"
 
-#define ACCEPT_MSG					"accept"
+#define ACCEPT_MSG					" accept"
 
 #define CLOSE_MSG					"close"
 
@@ -39,6 +39,14 @@
 #define WITHOUT_RELEASE_MSG			"withoutRelease"
 
 #define BUTTON_RELEASED_MSG			"ButtonReleased"
+
+#define TCP_EVENTS_MSG				"TCPEvents"
+
+#define DATA_MSG					"data"
+
+#define DATA_NAME_MSG				"dataName"
+
+#define DATA_REQUEST_MSG			"dataRequest"
 
 
 #define MAX_PAYLOAD_LEN_STR_LEN		10
@@ -86,6 +94,9 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 	char** payload;
 	size_t payload_len, payload_buffer_len;
 
+	bool isTCPEvents;
+	size_t auxlen;
+
 
 	errno = 0;
 
@@ -131,7 +142,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	errno = 0;
 
-	if (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
+	if (!Read_line (input_lines, &line_buffer, &line_buffer_len,
 							 &line_len, &eof_found, true, false))
 		return ERROR_READING_MAGIC_WORD;
 
@@ -234,13 +245,17 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 			PROCESS_P_C (g_daemonized, g_processor),
 			getpid(), "Trying to read and match hash from client...");
 
-	if (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
+	if (!Read_line (input_lines, &line_buffer, &line_buffer_len,
 							 &line_len, &eof_found, false, false))
 		return ERROR_READING_HASH;
 
 	errno = 0;
 
-	auxres = ( (line_len == HASH_LEN) && (strncasecmp (line_buffer, hash, line_len) == 0));
+	auxres = ( (line_len >= HASH_LEN) &&
+			(strncasecmp (line_buffer + line_len - HASH_LEN, hash, HASH_LEN) == 0));
+
+	isTCPEvents = (auxres && (line_len >= (HASH_LEN + strlen (TCP_EVENTS_MSG))) &&
+				   (strncasecmp (line_buffer, TCP_EVENTS_MSG, strlen (TCP_EVENTS_MSG)) == 0));
 
 	Free_string (&line_buffer);
 
@@ -309,7 +324,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 
 	do
 	{
-		if ( (!Read_stripped_line (input_lines, &line_buffer, &line_buffer_len,
+		if ( (!Read_line (input_lines, &line_buffer, &line_buffer_len,
 								   &line_len, &eof_found, false, true)) && (!eof_found))
 		{
 			Free_string_array (&payload, &payload_len, &payload_buffer_len);
@@ -386,7 +401,7 @@ int Process_new_client_connection (const int socket_fd, const char* client_host_
 					PROCESS_P_C (g_daemonized, g_processor),
 					getpid(), "Received: <Enduring Event - Stop>");
 
-			/* End last event. */
+			/* End enduring event. */
 
 			event = line_buffer;
 			event_type = tet_end_event;
@@ -628,7 +643,7 @@ static bool Execute_and_report_output (const char* executable, const char* clien
 			break;
 		}
 
-		error_executing = (!Read_stripped_line (pipe_read, &line_buffer,
+		error_executing = (!Read_line (pipe_read, &line_buffer,
 												&line_buffer_len, &line_len,
 												&eof_found, false, false));
 
