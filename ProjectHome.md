@@ -1,0 +1,1 @@
+Eventghost receiver daemon for Linux and sender program for Linux.
